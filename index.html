@@ -1,1605 +1,2068 @@
-```html
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#09090b">
-    <meta name="description" content="CinePay - Locadora Digital e Streaming Pay-Per-View por R$ 1,00 por filme com liberação instantânea via Pix CPF 058.504.666-22.">
-    <title>CinePay PWA • Filmes por R$ 1,00 (Pix CPF 058.504.666-22)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#090b10" />
+  <title>CinePay — Locadora Digital R$ 1,00</title>
+  <style>
+    :root {
+      --bg: #090b10;
+      --surface: #11151f;
+      --surface-2: #181e2c;
+      --surface-3: #20283b;
+      --text: #f3f5f8;
+      --muted: #98a2b3;
+      --border: rgba(255, 255, 255, 0.09);
+      --accent: #ef4444;
+      --accent-hover: #dc2626;
+      --cyan: #06b6d4;
+      --cyan-soft: rgba(6, 182, 212, 0.14);
+      --green: #10b981;
+      --green-soft: rgba(16, 185, 129, 0.14);
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.14);
+      --radius: 16px;
+      --shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+    }
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Cinzel -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        cinema: ['Cinzel', 'serif'],
-                    },
-                    colors: {
-                        cinema: {
-                            950: '#09090b',
-                            900: '#121216',
-                            800: '#1c1c24',
-                            700: '#272732',
-                            red: '#e50914',
-                            redHover: '#b80710',
-                            gold: '#f59e0b',
-                            goldLight: '#fbbf24'
-                        }
-                    }
-                }
-            }
-        };
-    </script>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top right, rgba(239, 68, 68, 0.08), transparent 45%),
+                  radial-gradient(circle at top left, rgba(6, 182, 212, 0.07), transparent 40%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding-bottom: 56px;
+    }
 
-    <style>
-        /* Scrollbar personalizada */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #09090b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #272732;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #e50914;
-        }
-        .movie-card-hover {
-            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
-        }
-        .movie-card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 18px 28px -8px rgba(229, 9, 20, 0.22), 0 8px 12px -6px rgba(0, 0, 0, 0.65);
-        }
-        .glass-nav {
-            background: rgba(9, 9, 11, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 14px rgba(245, 158, 11, 0.25); }
-            50% { box-shadow: 0 0 24px rgba(245, 158, 11, 0.55); }
-        }
-        .gold-glow {
-            animation: pulse-glow 3s infinite;
-        }
-    </style>
+    button, input, select, textarea {
+      font-family: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(9, 11, 16, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 0;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-sub {
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .status-pill {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .status-pill.offline {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      transition: transform 0.14s ease, background 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-ghost {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface-3);
+    }
+
+    .btn-ghost.active {
+      border-color: var(--cyan);
+      background: var(--cyan-soft);
+      color: #e0f7ff;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-cyan {
+      background: var(--cyan);
+      color: #041016;
+      font-weight: 700;
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: #04150e;
+      font-weight: 700;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      border-radius: 8px;
+    }
+
+    .badge-count {
+      background: rgba(255, 255, 255, 0.16);
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+    }
+
+    /* Hero / Controls */
+    .hero {
+      margin: 20px 0 18px;
+      padding: 18px;
+      border-radius: var(--radius);
+      background: linear-gradient(125deg, rgba(239, 68, 68, 0.12), rgba(17, 21, 31, 0.95) 45%, rgba(6, 182, 212, 0.1));
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.35rem, 3vw, 1.9rem);
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 4px;
+    }
+
+    .pix-highlight {
+      background: var(--surface-2);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.84rem;
+    }
+
+    .pix-highlight strong {
+      color: var(--cyan);
+    }
+
+    .filters-bar {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+    }
+
+    @media (max-width: 720px) {
+      .filters-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .input, .select, .textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: var(--cyan);
+    }
+
+    .genres-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      white-space: nowrap;
+      color: var(--muted);
+    }
+
+    .chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Continue Watching */
+    .continue-box {
+      margin-bottom: 22px;
+      padding: 14px;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 1.12rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Movies Grid */
+    .movies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 480px) {
+      .movies-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+    }
+
+    .movie-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.16s ease, border-color 0.16s ease;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    .poster-wrap {
+      position: relative;
+      aspect-ratio: 2 / 3;
+      background: var(--surface-2);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .poster-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .poster-top {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+    }
+
+    .tag-price {
+      background: rgba(9, 11, 16, 0.85);
+      border: 1px solid rgba(6, 182, 212, 0.45);
+      color: var(--cyan);
+    }
+
+    .tag-unlocked {
+      background: rgba(16, 185, 129, 0.9);
+      color: #03150d;
+    }
+
+    .fav-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(9, 11, 16, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+    }
+
+    .fav-btn.active {
+      color: #fb7185;
+      border-color: #fb7185;
+    }
+
+    .movie-body {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .movie-title {
+      font-weight: 700;
+      font-size: 0.96rem;
+      line-height: 1.3;
+      cursor: pointer;
+    }
+
+    .movie-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .movie-sinopse {
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 5px;
+      background: var(--surface-3);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar > span {
+      display: block;
+      height: 100%;
+      background: var(--cyan);
+    }
+
+    .movie-actions {
+      margin-top: auto;
+      display: flex;
+      gap: 6px;
+      padding-top: 6px;
+    }
+
+    /* Admin Panel */
+    .admin-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+      margin: 16px 0 22px;
+    }
+
+    .stat-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 880px) {
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--surface-2);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(6px);
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 560px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal.modal-lg {
+      max-width: 820px;
+    }
+
+    .modal-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-body {
+      padding: 18px;
+      overflow-y: auto;
+    }
+
+    .pix-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .pix-code-box {
+      background: var(--bg);
+      border: 1px dashed rgba(6, 182, 212, 0.5);
+      border-radius: 10px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 0.76rem;
+      word-break: break-all;
+      color: #cffafe;
+      margin: 10px 0;
+      text-align: left;
+    }
+
+    .player-frame {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .player-frame iframe,
+    .player-frame video {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    .demo-screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      background: radial-gradient(circle at center, rgba(239, 68, 68, 0.25), #05070c 75%);
+    }
+
+    .review-item {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 0.84rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 90;
+      background: var(--surface-3);
+      border: 1px solid var(--cyan);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      color: var(--muted);
+    }
+  </style>
 </head>
-<body class="bg-cinema-950 text-zinc-100 font-sans antialiased min-h-screen flex flex-col selection:bg-cinema-red selection:text-white overflow-x-hidden">
-
-    <!-- Container de Notificações Toast -->
-    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-3 sm:px-0"></div>
-
-    <!-- Cabeçalho Responsivo Mobile-First -->
-    <header class="sticky top-0 z-40 glass-nav border-b border-zinc-800/80">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between gap-2 min-h-[4rem] sm:min-h-[5rem] py-2">
-                <!-- Marca / Logo -->
-                <button type="button" onclick="switchView('client')" class="flex items-center gap-2 sm:gap-3 text-left shrink-0 group">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-cinema-red to-amber-600 flex items-center justify-center shadow-lg shadow-cinema-red/25 group-hover:scale-105 transition">
-                        <i data-lucide="film" class="w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
-                    </div>
-                    <div>
-                        <span class="font-cinema text-lg sm:text-2xl font-black tracking-wider bg-gradient-to-r from-white via-zinc-200 to-cinema-gold bg-clip-text text-transparent block leading-none">CINEPAY</span>
-                        <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.16em] text-zinc-400 mt-0.5 block">R$ 1,00 / filme</span>
-                    </div>
-                </button>
-
-                <!-- Controles de Navegação Sem Quebra ou Corte -->
-                <nav class="flex items-center gap-1.5 sm:gap-2.5 shrink-0" aria-label="Navegação principal">
-                    <!-- Meus Filmes Desbloqueados -->
-                    <button type="button" onclick="setCatalogTab('unlocked')" id="nav-btn-unlocked"
-                        class="flex items-center gap-1 px-2.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-semibold text-zinc-300 transition" title="Meus Filmes Liberados">
-                        <i data-lucide="unlock" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
-                        <span class="hidden md:inline">Meus</span>
-                        <span id="unlocked-count-badge" class="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 text-emerald-400">0</span>
-                    </button>
-
-                    <!-- Lista de Desejos / Favoritos -->
-                    <button type="button" onclick="setCatalogTab('favorites')" id="nav-btn-favorites"
-                        class="flex items-center gap-1 px-2.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-semibold text-zinc-300 transition" title="Lista de Desejos">
-                        <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-400 shrink-0"></i>
-                        <span class="hidden md:inline">Favoritos</span>
-                        <span id="favorites-count-badge" class="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-rose-500/20 text-rose-400">0</span>
-                    </button>
-
-                    <!-- Seletor Catálogo / Admin -->
-                    <div class="flex items-center bg-zinc-900 p-1 rounded-xl border border-zinc-800">
-                        <button type="button" id="tab-client" onclick="switchView('client')"
-                            class="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-xs font-bold transition bg-cinema-red text-white shadow whitespace-nowrap">
-                            <i data-lucide="clapperboard" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
-                            <span>Catálogo</span>
-                        </button>
-                        <button type="button" id="tab-admin" onclick="requestAdminAccess()"
-                            class="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-xs font-bold text-zinc-300 hover:text-white transition whitespace-nowrap">
-                            <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cinema-gold shrink-0"></i>
-                            <span>Admin</span>
-                        </button>
-                    </div>
-                </nav>
-            </div>
+<body>
+  <header>
+    <div class="container header-inner">
+      <button class="brand" onclick="setView('catalog')">
+        <div class="brand-logo">CP</div>
+        <div>
+          <div class="brand-title">
+            CINEPAY
+            <span class="status-pill" id="netStatus">Online</span>
+          </div>
+          <div class="brand-sub">Filmes por R$ 1,00 • Pix CPF 058.504.666-22</div>
         </div>
-    </header>
+      </button>
 
-    <!-- ========================================== -->
-    <!-- VISÃO DO CLIENTE (CATÁLOGO DE FILMES)      -->
-    <!-- ========================================== -->
-    <main id="view-client" class="flex-1">
-        <!-- Hero Banner em Destaque -->
-        <section id="hero-section" class="relative overflow-hidden border-b border-zinc-800/60 bg-cinema-900"></section>
+      <nav class="nav-actions">
+        <button class="btn btn-ghost btn-sm active" id="navCatalog" onclick="setView('catalog')">
+          Catálogo
+        </button>
+        <button class="btn btn-ghost btn-sm" id="navMine" onclick="setView('mine')">
+          Meus Filmes <span class="badge-count" id="mineCount">0</span>
+        </button>
+        <button class="btn btn-ghost btn-sm" id="navFavs" onclick="setView('favorites')">
+          Favoritos <span class="badge-count" id="favCount">0</span>
+        </button>
+        <button class="btn btn-primary btn-sm" id="navAdmin" onclick="openAdminGate()">
+          Painel Admin
+        </button>
+      </nav>
+    </div>
+  </header>
 
-        <!-- Barra de Busca, Abas, Gêneros e Ordenação -->
-        <section class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-4">
-            <!-- Abas Rápidas do Catálogo -->
-            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-                <div class="flex items-center gap-1.5 bg-zinc-900/90 p-1 rounded-xl border border-zinc-800 overflow-x-auto max-w-full">
-                    <button type="button" id="filter-tab-all" onclick="setCatalogTab('all')"
-                        class="px-3 py-1.5 rounded-lg text-xs font-bold bg-zinc-800 text-white transition whitespace-nowrap">
-                        Todos os Filmes
-                    </button>
-                    <button type="button" id="filter-tab-unlocked" onclick="setCatalogTab('unlocked')"
-                        class="px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition whitespace-nowrap">
-                        Meus Filmes
-                    </button>
-                    <button type="button" id="filter-tab-favorites" onclick="setCatalogTab('favorites')"
-                        class="px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition whitespace-nowrap">
-                        Lista de Desejos
-                    </button>
-                </div>
+  <main class="container" id="appView">
+    <!-- Conteúdo renderizado via JS -->
+  </main>
 
-                <!-- Badge de Status Pix & Offline -->
-                <div class="flex items-center gap-2 text-[11px] text-zinc-400">
-                    <span id="offline-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                        <span>Salvo Local + Offline</span>
-                    </span>
-                    <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono">
-                        Pix CPF: 058.504.666-22
-                    </span>
-                </div>
+  <!-- Modal Detalhes & Avaliações -->
+  <div class="modal-backdrop" id="detailsModal">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <h3 id="detailsTitle">Detalhes do Filme</h3>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('detailsModal')">✕</button>
+      </div>
+      <div class="modal-body" id="detailsBody"></div>
+    </div>
+  </div>
+
+  <!-- Modal Checkout Pix R$ 1,00 -->
+  <div class="modal-backdrop" id="checkoutModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Pagamento via Pix — R$ 1,00</h3>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('checkoutModal')">✕</button>
+      </div>
+      <div class="modal-body" id="checkoutBody"></div>
+    </div>
+  </div>
+
+  <!-- Modal Player de Vídeo -->
+  <div class="modal-backdrop" id="playerModal">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <h3 id="playerTitle">Reproduzindo Filme</h3>
+        <button class="btn btn-ghost btn-sm" onclick="closePlayer()">✕</button>
+      </div>
+      <div class="modal-body" id="playerBody"></div>
+    </div>
+  </div>
+
+  <!-- Modal Senha Admin -->
+  <div class="modal-backdrop" id="adminPassModal">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-head">
+        <h3>Acesso ao Painel Admin</h3>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('adminPassModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.86rem; color: var(--muted); margin-bottom: 12px;">
+          Digite a senha administrativa para cadastrar filmes, importar/exportar JSON e ver vendas. (Padrão: <strong>1234</strong>)
+        </p>
+        <input type="password" id="adminPassInput" class="input" placeholder="Digite a senha..." onkeydown="if(event.key==='Enter') verifyAdminPass()" />
+        <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="verifyAdminPass()">
+          Entrar no Painel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const PIX_KEY_RAW = "05850466622";
+    const PIX_KEY_FORMATTED = "058.504.666-22";
+    const PIX_MERCHANT_NAME = "CINEPAY DIGITAL";
+    const PIX_MERCHANT_CITY = "BELO HORIZONTE";
+    const DEFAULT_PRICE = 1.00;
+    const ADMIN_PASS_DEFAULT = "1234";
+
+    const STORAGE_KEYS = {
+      movies: "cinepay_v3_movies",
+      unlocked: "cinepay_v3_unlocked",
+      favorites: "cinepay_v3_favorites",
+      sales: "cinepay_v3_sales",
+      progress: "cinepay_v3_progress",
+      reviews: "cinepay_v3_reviews",
+      adminPass: "cinepay_v3_admin_pass"
+    };
+
+    const SAMPLE_MOVIES = [
+      {
+        id: "m-1",
+        title: "Horizonte de Aço",
+        year: 2025,
+        genre: "Ação",
+        duration: "1h 54m",
+        price: 1.00,
+        synopsis: "Um piloto de resgate enfrenta uma tempestade orbital para salvar uma estação científica em órbita baixa.",
+        poster: "",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        trailerUrl: ""
+      },
+      {
+        id: "m-2",
+        title: "Noites de Minas",
+        year: 2025,
+        genre: "Drama",
+        duration: "1h 42m",
+        price: 1.00,
+        synopsis: "Entre montanhas, neblina e cafés antigos, dois músicos reencontram antigas canções e escolhas esquecidas.",
+        poster: "",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        trailerUrl: ""
+      },
+      {
+        id: "m-3",
+        title: "Código Fantasma",
+        year: 2026,
+        genre: "Ficção Científica",
+        duration: "2h 05m",
+        price: 1.00,
+        synopsis: "Uma analista de sistemas descobre um protocolo oculto capaz de reescrever memórias digitais.",
+        poster: "",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        trailerUrl: ""
+      },
+      {
+        id: "m-4",
+        title: "Riso Solto na Estrada",
+        year: 2024,
+        genre: "Comédia",
+        duration: "1h 36m",
+        price: 1.00,
+        synopsis: "Quatro amigos alugam um carro clássico para chegar a um casamento e tudo dá errado no caminho.",
+        poster: "",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoy.mp4",
+        trailerUrl: ""
+      },
+      {
+        id: "m-5",
+        title: "O Último Sinal",
+        year: 2025,
+        genre: "Suspense",
+        duration: "1h 48m",
+        price: 1.00,
+        synopsis: "Um operador de rádio isolado no litoral capta uma transmissão repetitiva vinda de alto-mar.",
+        poster: "",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+        trailerUrl: ""
+      },
+      {
+        id: "m-6",
+        title: "Universo em Foco",
+        year: 2026,
+        genre: "Documentário",
+        duration: "1h 28m",
+        price: 1.00,
+        synopsis: "Uma jornada visual pelos maiores telescópios e observatórios que revelam o nascimento das estrelas.",
+        poster: "",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+        trailerUrl: ""
+      }
+    ];
+
+    let state = {
+      view: "catalog", // catalog | mine | favorites | admin
+      search: "",
+      genre: "Todos",
+      sort: "featured",
+      movies: [],
+      unlocked: [],
+      favorites: [],
+      sales: [],
+      progress: {},
+      reviews: {},
+      editingMovieId: null,
+      currentCheckoutMovieId: null,
+      currentPlayerMovieId: null
+    };
+
+    function loadState() {
+      try {
+        const rawMovies = localStorage.getItem(STORAGE_KEYS.movies);
+        state.movies = rawMovies ? JSON.parse(rawMovies) : [...SAMPLE_MOVIES];
+        if (!Array.isArray(state.movies)) state.movies = [...SAMPLE_MOVIES];
+
+        state.unlocked = JSON.parse(localStorage.getItem(STORAGE_KEYS.unlocked) || "[]");
+        state.favorites = JSON.parse(localStorage.getItem(STORAGE_KEYS.favorites) || "[]");
+        state.sales = JSON.parse(localStorage.getItem(STORAGE_KEYS.sales) || "[]");
+        state.progress = JSON.parse(localStorage.getItem(STORAGE_KEYS.progress) || "{}");
+        state.reviews = JSON.parse(localStorage.getItem(STORAGE_KEYS.reviews) || "{}");
+        if (!localStorage.getItem(STORAGE_KEYS.adminPass)) {
+          localStorage.setItem(STORAGE_KEYS.adminPass, ADMIN_PASS_DEFAULT);
+        }
+      } catch (e) {
+        state.movies = [...SAMPLE_MOVIES];
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEYS.movies, JSON.stringify(state.movies));
+      localStorage.setItem(STORAGE_KEYS.unlocked, JSON.stringify(state.unlocked));
+      localStorage.setItem(STORAGE_KEYS.favorites, JSON.stringify(state.favorites));
+      localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(state.sales));
+      localStorage.setItem(STORAGE_KEYS.progress, JSON.stringify(state.progress));
+      localStorage.setItem(STORAGE_KEYS.reviews, JSON.stringify(state.reviews));
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => el.classList.remove("show"), 2800);
+    }
+
+    function formatBRL(val) {
+      return Number(val || 0).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function generatePosterDataUrl(title, genre, year) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 400;
+      canvas.height = 600;
+      const ctx = canvas.getContext("2d");
+
+      const palettes = [
+        ["#1e1b4b", "#0f172a", "#ef4444"],
+        ["#082f49", "#090d16", "#06b6d4"],
+        ["#3b0764", "#09090b", "#f59e0b"],
+        ["#064e3b", "#060b09", "#10b981"]
+      ];
+      const idx = Math.abs(String(title).split("").reduce((a, c) => a + c.charCodeAt(0), 0)) % palettes.length;
+      const [c1, c2, acc] = palettes[idx];
+
+      const grad = ctx.createLinearGradient(0, 0, 400, 600);
+      grad.addColorStop(0, c1);
+      grad.addColorStop(1, c2);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 400, 600);
+
+      ctx.strokeStyle = acc;
+      ctx.lineWidth = 4;
+      ctx.strokeRect(18, 18, 364, 564);
+
+      ctx.fillStyle = acc;
+      ctx.font = "bold 18px system-ui, sans-serif";
+      ctx.fillText(`CINEPAY • R$ 1,00`, 36, 62);
+
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "600 15px system-ui, sans-serif";
+      ctx.fillText(`${genre || "Filme"} • ${year || "2026"}`, 36, 92);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "800 32px system-ui, sans-serif";
+      const words = String(title || "Filme").split(" ");
+      let line = "";
+      let y = 250;
+      for (const w of words) {
+        const test = line ? `${line} ${w}` : w;
+        if (ctx.measureText(test).width > 328 && line) {
+          ctx.fillText(line, 36, y);
+          line = w;
+          y += 40;
+        } else {
+          line = test;
+        }
+      }
+      if (line) ctx.fillText(line, 36, y);
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "500 15px system-ui, sans-serif";
+      ctx.fillText("Toque para assistir • Pix CPF 058.504.666-22", 36, 542);
+
+      return canvas.toDataURL("image/jpeg", 0.85);
+    }
+
+    function getPoster(movie) {
+      if (movie.poster && (movie.poster.startsWith("http") || movie.poster.startsWith("data:image"))) {
+        return movie.poster;
+      }
+      return generatePosterDataUrl(movie.title, movie.genre, movie.year);
+    }
+
+    function normalizeMovie(raw, idx = 0) {
+      const priceNum = Number(raw.price);
+      return {
+        id: String(raw.id || `m-${Date.now()}-${idx}`),
+        title: String(raw.title || raw.titulo || "Filme sem título").trim(),
+        year: Number(raw.year || raw.ano || 2026) || 2026,
+        genre: String(raw.genre || raw.genero || "Geral").trim(),
+        duration: String(raw.duration || raw.duracao || "1h 40m").trim(),
+        price: Number.isFinite(priceNum) && priceNum >= 0 ? Number(priceNum.toFixed(2)) : DEFAULT_PRICE,
+        synopsis: String(raw.synopsis || raw.sinopse || "Filme disponível no catálogo CinePay.").trim(),
+        poster: String(raw.poster || raw.capa || "").trim(),
+        videoUrl: String(raw.videoUrl || raw.url || raw.video || "").trim(),
+        trailerUrl: String(raw.trailerUrl || raw.trailer || "").trim()
+      };
+    }
+
+    /* EMV Pix BR Code Generator + CRC16-CCITT */
+    function crc16Ccitt(str) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+        for (let b = 0; b < 8; b++) {
+          if (crc & 0x8000) {
+            crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+          } else {
+            crc = (crc << 1) & 0xFFFF;
+          }
+        }
+      }
+      return crc.toString(16).toUpperCase().padStart(4, "0");
+    }
+
+    function emvField(id, value) {
+      const val = String(value);
+      const len = String(val.length).padStart(2, "0");
+      return `${id}${len}${val}`;
+    }
+
+    function buildPixPayload(amount, txidLabel = "CINEPAY") {
+      const cleanKey = PIX_KEY_RAW.replace(/\D/g, "");
+      const gui = emvField("00", "br.gov.bcb.pix");
+      const keyField = emvField("01", cleanKey);
+      const merchantAccountInfo = emvField("26", `${gui}${keyField}`);
+
+      const mcc = emvField("52", "0000");
+      const currency = emvField("53", "986");
+      const amountStr = Number(amount || DEFAULT_PRICE).toFixed(2);
+      const amountField = emvField("54", amountStr);
+      const country = emvField("58", "BR");
+      const name = emvField("59", PIX_MERCHANT_NAME.slice(0, 25));
+      const city = emvField("60", PIX_MERCHANT_CITY.slice(0, 15));
+
+      const cleanTxid = String(txidLabel || "CINEPAY").replace(/[^A-Za-z0-9]/g, "").slice(0, 20) || "CINEPAY";
+      const addDataField = emvField("62", emvField("05", cleanTxid));
+
+      const payloadWithoutCrc = `000201${merchantAccountInfo}${mcc}${currency}${amountField}${country}${name}${city}${addDataField}6304`;
+      const crc = crc16Ccitt(payloadWithoutCrc);
+      return `${payloadWithoutCrc}${crc}`;
+    }
+
+    function drawQrMatrixOnCanvas(canvas, text) {
+      const ctx = canvas.getContext("2d");
+      const size = canvas.width;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, size, size);
+
+      const cells = 29;
+      const margin = 16;
+      const cellSize = Math.floor((size - margin * 2) / cells);
+      const offset = Math.floor((size - cellSize * cells) / 2);
+
+      const matrix = Array.from({ length: cells }, () => Array(cells).fill(false));
+
+      function drawFinder(r0, c0) {
+        for (let r = -1; r <= 7; r++) {
+          for (let c = -1; c <= 7; c++) {
+            const rr = r0 + r;
+            const cc = c0 + c;
+            if (rr < 0 || rr >= cells || cc < 0 || cc >= cells) continue;
+            const onBorder = r === 0 || r === 6 || c === 0 || c === 6;
+            const onCenter = r >= 2 && r <= 4 && c >= 2 && c <= 4;
+            matrix[rr][cc] = onBorder || onCenter;
+          }
+        }
+      }
+
+      drawFinder(0, 0);
+      drawFinder(0, cells - 7);
+      drawFinder(cells - 7, 0);
+
+      let hash = 2166136261;
+      for (let i = 0; i < text.length; i++) {
+        hash ^= text.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+
+      for (let r = 0; r < cells; r++) {
+        for (let c = 0; c < cells; c++) {
+          const inFinderA = r < 8 && c < 8;
+          const inFinderB = r < 8 && c >= cells - 8;
+          const inFinderC = r >= cells - 8 && c < 8;
+          if (inFinderA || inFinderB || inFinderC) continue;
+          hash ^= (r * 31 + c * 17 + iMix(r, c, hash));
+          hash = Math.imul(hash, 16777619);
+          matrix[r][c] = ((hash >>> 0) % 100) < 46;
+        }
+      }
+
+      function iMix(a, b, h) {
+        return ((a * b + (h & 255)) & 255);
+      }
+
+      ctx.fillStyle = "#090b10";
+      for (let r = 0; r < cells; r++) {
+        for (let c = 0; c < cells; c++) {
+          if (matrix[r][c]) {
+            ctx.fillRect(offset + c * cellSize, offset + r * cellSize, cellSize, cellSize);
+          }
+        }
+      }
+    }
+
+    function updateBadges() {
+      document.getElementById("mineCount").textContent = state.unlocked.length;
+      document.getElementById("favCount").textContent = state.favorites.length;
+      ["navCatalog", "navMine", "navFavs", "navAdmin"].forEach(id => {
+        document.getElementById(id)?.classList.remove("active");
+      });
+      if (state.view === "catalog") document.getElementById("navCatalog")?.classList.add("active");
+      if (state.view === "mine") document.getElementById("navMine")?.classList.add("active");
+      if (state.view === "favorites") document.getElementById("navFavs")?.classList.add("active");
+      if (state.view === "admin") document.getElementById("navAdmin")?.classList.add("active");
+    }
+
+    function setView(v) {
+      state.view = v;
+      render();
+    }
+
+    function toggleFavorite(id, ev) {
+      if (ev) ev.stopPropagation();
+      const idx = state.favorites.indexOf(id);
+      if (idx >= 0) {
+        state.favorites.splice(idx, 1);
+        showToast("Removido dos favoritos");
+      } else {
+        state.favorites.push(id);
+        showToast("Adicionado aos favoritos");
+      }
+      saveState();
+      render();
+    }
+
+    function getFilteredMovies() {
+      let list = [...state.movies];
+      if (state.view === "mine") {
+        list = list.filter(m => state.unlocked.includes(m.id));
+      } else if (state.view === "favorites") {
+        list = list.filter(m => state.favorites.includes(m.id));
+      }
+
+      if (state.genre && state.genre !== "Todos") {
+        list = list.filter(m => m.genre.toLowerCase() === state.genre.toLowerCase());
+      }
+
+      if (state.search.trim()) {
+        const q = state.search.trim().toLowerCase();
+        list = list.filter(m =>
+          m.title.toLowerCase().includes(q) ||
+          m.synopsis.toLowerCase().includes(q) ||
+          m.genre.toLowerCase().includes(q) ||
+          String(m.year).includes(q)
+        );
+      }
+
+      if (state.sort === "price_asc") {
+        list.sort((a, b) => a.price - b.price);
+      } else if (state.sort === "year_desc") {
+        list.sort((a, b) => b.year - a.year);
+      } else if (state.sort === "title_asc") {
+        list.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+      }
+      return list;
+    }
+
+    function renderMovieCard(m) {
+      const isUnlocked = state.unlocked.includes(m.id);
+      const isFav = state.favorites.includes(m.id);
+      const prog = state.progress[m.id] || 0;
+      const poster = getPoster(m);
+
+      return `
+        <article class="movie-card">
+          <div class="poster-wrap" onclick="openDetails('${m.id}')">
+            <img src="${poster}" alt="${escapeHtml(m.title)}" loading="lazy" />
+            <div class="poster-top">
+              ${
+                isUnlocked
+                  ? `<span class="tag tag-unlocked">Liberado</span>`
+                  : `<span class="tag tag-price">${formatBRL(m.price)}</span>`
+              }
+              <button class="fav-btn ${isFav ? "active" : ""}" title="Favoritar" onclick="toggleFavorite('${m.id}', event)">
+                ${isFav ? "♥" : "♡"}
+              </button>
             </div>
-
-            <!-- Painel de Pesquisa, Gênero e Ordenação -->
-            <div class="flex flex-col lg:flex-row gap-3.5 justify-between items-stretch lg:items-center bg-cinema-900/90 p-3.5 sm:p-4 rounded-2xl border border-zinc-800/80 shadow-xl">
-                <!-- Campo de Busca -->
-                <div class="relative flex-1">
-                    <i data-lucide="search" class="w-4 h-4 sm:w-5 sm:h-5 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-                    <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Buscar por título, sinopse, gênero ou ano..."
-                        class="w-full pl-10 pr-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-cinema-gold transition">
-                </div>
-
-                <!-- Ordenação -->
-                <div class="flex items-center gap-2 shrink-0">
-                    <label for="sort-select" class="text-xs text-zinc-400 whitespace-nowrap">Ordenar:</label>
-                    <select id="sort-select" onchange="renderCatalog()"
-                        class="px-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:border-cinema-gold transition">
-                        <option value="featured">Destaques</option>
-                        <option value="price-asc">Menor Preço (R$ 1,00)</option>
-                        <option value="year-desc">Ano (Mais Recentes)</option>
-                        <option value="year-asc">Ano (Mais Antigos)</option>
-                        <option value="title-asc">Título (A - Z)</option>
-                    </select>
-                </div>
+          </div>
+          <div class="movie-body">
+            <div class="movie-title" onclick="openDetails('${m.id}')">${escapeHtml(m.title)}</div>
+            <div class="movie-meta">
+              <span>${escapeHtml(m.genre)}</span>
+              <span>${m.year} • ${escapeHtml(m.duration)}</span>
             </div>
-
-            <!-- Filtros de Gênero -->
-            <div class="flex items-center gap-2 overflow-x-auto py-3 mt-1" id="genre-filters"></div>
-
-            <!-- Título e Contador -->
-            <div class="flex flex-wrap items-center justify-between gap-2 mt-2 mb-4">
-                <div class="flex items-center gap-2">
-                    <span class="w-1.5 h-6 bg-cinema-red rounded-full"></span>
-                    <h2 id="catalog-heading" class="text-lg sm:text-xl font-bold text-white">Catálogo Disponível • R$ 1,00</h2>
-                </div>
-                <span id="movies-showing-count" class="text-xs sm:text-sm text-zinc-400">Mostrando 0 filmes</span>
+            <p class="movie-sinopse">${escapeHtml(m.synopsis)}</p>
+            ${
+              prog > 0
+                ? `<div class="progress-bar" title="Progresso: ${prog}%"><span style="width:${Math.min(100, prog)}%"></span></div>`
+                : ""
+            }
+            <div class="movie-actions">
+              ${
+                isUnlocked
+                  ? `<button class="btn btn-green btn-sm" style="flex:1" onclick="openPlayer('${m.id}')">▶ Assistir</button>`
+                  : `<button class="btn btn-cyan btn-sm" style="flex:1" onclick="openCheckout('${m.id}')">Pix ${formatBRL(m.price)}</button>`
+              }
+              <button class="btn btn-ghost btn-sm" onclick="openDetails('${m.id}')">Detalhes</button>
             </div>
+          </div>
+        </article>
+      `;
+    }
 
-            <!-- Grade de Filmes -->
-            <div id="movies-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6 pb-16"></div>
+    function renderCatalogView() {
+      const genres = ["Todos", ...Array.from(new Set(state.movies.map(m => m.genre).filter(Boolean)))];
+      const filtered = getFilteredMovies();
 
-            <!-- Estado Vazio com Ação Rápida para Carregar Filmes Exemplo -->
-            <div id="empty-catalog" class="hidden text-center py-14 px-4 bg-cinema-900/60 rounded-2xl border border-dashed border-zinc-800 mb-16">
-                <i data-lucide="film" class="w-12 h-12 text-zinc-600 mx-auto mb-3"></i>
-                <h3 id="empty-catalog-title" class="text-lg font-semibold text-zinc-200">Nenhum filme encontrado</h3>
-                <p id="empty-catalog-desc" class="text-sm text-zinc-400 mt-1 max-w-md mx-auto">Tente limpar os filtros de busca, carregar os filmes de exemplo ou importar um arquivo JSON no Painel Admin.</p>
-                <div class="mt-5 flex flex-wrap items-center justify-center gap-2.5">
-                    <button type="button" onclick="resetFilters()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-xs sm:text-sm font-semibold rounded-xl transition">
-                        Limpar Filtros
-                    </button>
-                    <button type="button" onclick="loadSampleMoviesNow()" class="px-4 py-2 bg-cinema-gold hover:bg-amber-400 text-zinc-950 text-xs sm:text-sm font-bold rounded-xl transition flex items-center gap-1.5">
-                        <i data-lucide="sparkles" class="w-4 h-4"></i>
-                        <span>Carregar Filmes Exemplo (R$ 1,00)</span>
-                    </button>
-                </div>
-            </div>
-        </section>
-    </main>
+      const continueIds = Object.keys(state.progress)
+        .filter(id => state.progress[id] > 0 && state.progress[id] < 98 && state.unlocked.includes(id))
+        .slice(0, 4);
+      const continueMovies = continueIds.map(id => state.movies.find(m => m.id === id)).filter(Boolean);
 
-    <!-- ========================================== -->
-    <!-- VISÃO DO ADMINISTRADOR (PAINEL GERENCIAL)  -->
-    <!-- ========================================== -->
-    <main id="view-admin" class="hidden flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <!-- Cabeçalho Admin -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
+      const headingLabel =
+        state.view === "mine"
+          ? "Meus Filmes Liberados"
+          : state.view === "favorites"
+          ? "Minha Lista de Desejos"
+          : "Catálogo de Filmes";
+
+      return `
+        <section class="hero">
+          <div class="hero-top">
             <div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-cinema-gold/20 text-cinema-gold rounded-md border border-cinema-gold/30">Área Restrita</span>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-white">Painel Administrativo</h1>
-                </div>
-                <p class="text-xs sm:text-sm text-zinc-400 mt-1">Cadastre filmes por R$ 1,00, receba via Pix CPF 058.504.666-22, importe/exporte JSON e acompanhe vendas.</p>
+              <h1>Filmes Sob Demanda por R$ 1,00</h1>
+              <p>Pague via Pix CPF e o vídeo libera na hora no navegador, com histórico e progresso salvos.</p>
             </div>
-            <div class="flex flex-wrap items-center gap-2">
-                <button type="button" onclick="applyOneRealToAllMovies()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-700/50 text-xs font-semibold text-emerald-300 transition">
-                    <i data-lucide="badge-dollar-sign" class="w-4 h-4 text-emerald-400"></i>
-                    <span>Aplicar R$ 1,00 em Todos</span>
-                </button>
-                <button type="button" onclick="exportBackupJSON()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-semibold text-zinc-200 transition">
-                    <i data-lucide="download" class="w-4 h-4 text-cinema-gold"></i>
-                    <span>Exportar JSON</span>
-                </button>
-                <label class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-semibold text-zinc-200 transition cursor-pointer">
-                    <i data-lucide="upload" class="w-4 h-4 text-emerald-400"></i>
-                    <span>Importar JSON</span>
-                    <input type="file" id="import-json-input" accept=".json,application/json" onchange="handleImportFileSelect(event)" class="hidden">
-                </label>
-                <button type="button" onclick="copyStandaloneHtmlSource()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-semibold text-sky-300 transition" title="Copiar código HTML completo">
-                    <i data-lucide="code" class="w-4 h-4 text-sky-400"></i>
-                    <span>Copiar HTML</span>
-                </button>
-                <button type="button" onclick="logoutAdmin()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-950/50 hover:bg-red-900/50 border border-red-800/50 text-xs font-semibold text-red-300 transition">
-                    <i data-lucide="log-out" class="w-4 h-4"></i>
-                    <span>Sair</span>
-                </button>
+            <div class="pix-highlight">
+              <div>Chave Pix CPF: <strong>${PIX_KEY_FORMATTED}</strong></div>
+              <div style="color: var(--muted); font-size: 0.78rem;">Liberação instantânea ao confirmar o Pix</div>
             </div>
-        </div>
+          </div>
 
-        <!-- Configurações Pix CPF, WhatsApp e PIN -->
-        <div class="bg-cinema-900 border border-zinc-800 rounded-2xl p-4 sm:p-5 my-6 shadow-lg">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 items-end">
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-cinema-gold mb-1.5">Chave Pix CPF</label>
-                    <input type="text" id="setting-pix-key" value="05850466622" placeholder="05850466622"
-                        class="w-full px-3 py-2 bg-zinc-950 border border-cinema-gold/40 rounded-xl text-sm font-mono font-bold text-white focus:outline-none focus:border-cinema-gold">
+          <div class="filters-bar">
+            <input
+              type="text"
+              class="input"
+              placeholder="Buscar por título, gênero, sinopse ou ano..."
+              value="${escapeHtml(state.search)}"
+              oninput="state.search = this.value; renderListOnly();"
+            />
+            <select class="select" onchange="state.sort = this.value; renderListOnly();">
+              <option value="featured" ${state.sort === "featured" ? "selected" : ""}>Ordenar: Destaque</option>
+              <option value="price_asc" ${state.sort === "price_asc" ? "selected" : ""}>Menor preço</option>
+              <option value="year_desc" ${state.sort === "year_desc" ? "selected" : ""}>Mais recentes</option>
+              <option value="title_asc" ${state.sort === "title_asc" ? "selected" : ""}>Título (A–Z)</option>
+            </select>
+            ${
+              state.movies.length === 0
+                ? `<button class="btn btn-cyan" onclick="restoreSampleMovies()">Carregar Filmes Exemplo</button>`
+                : ""
+            }
+          </div>
+
+          <div class="genres-row">
+            ${genres
+              .map(
+                g => `<button class="chip ${state.genre === g ? "active" : ""}" onclick="state.genre='${escapeHtml(g)}'; render();">${escapeHtml(g)}</button>`
+              )
+              .join("")}
+          </div>
+        </section>
+
+        ${
+          state.view === "catalog" && continueMovies.length > 0
+            ? `
+              <section class="continue-box">
+                <div class="section-header" style="margin-bottom:10px;">
+                  <div class="section-title">⏯ Continuar assistindo</div>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Recebedor Pix</label>
-                    <input type="text" id="setting-pix-name" value="CINEPAY LOCADORA" maxlength="25"
-                        class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-1.5">WhatsApp Suporte (DDD+Número)</label>
-                    <input type="text" id="setting-whatsapp" value="" placeholder="Ex: 5531999999999"
-                        class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-sm font-mono text-white focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Senha Admin (PIN)</label>
-                    <input type="text" id="setting-admin-pass" value="1234" placeholder="1234"
-                        class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-sm font-mono text-white focus:outline-none focus:border-cinema-gold">
-                </div>
-                <button type="button" onclick="saveAdminSettings()" class="w-full px-4 py-2.5 bg-cinema-gold hover:bg-amber-400 text-zinc-950 font-bold text-sm rounded-xl transition flex items-center justify-center gap-2">
-                    <i data-lucide="check" class="w-4 h-4"></i>
-                    <span>Salvar Ajustes</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Cards de Métricas Financeiras -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 my-6">
-            <div class="bg-cinema-900 border border-zinc-800 p-5 rounded-2xl shadow-lg">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Faturamento Total</span>
-                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-                        <i data-lucide="dollar-sign" class="w-5 h-5"></i>
-                    </div>
-                </div>
-                <p id="stat-revenue" class="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-2">R$ 0,00</p>
-                <span class="text-xs text-zinc-500 mt-1 block">Receita acumulada via Pix/Cartão</span>
-            </div>
-
-            <div class="bg-cinema-900 border border-zinc-800 p-5 rounded-2xl shadow-lg">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Filmes Liberados</span>
-                    <div class="w-9 h-9 rounded-xl bg-cinema-gold/10 flex items-center justify-center text-cinema-gold">
-                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-                    </div>
-                </div>
-                <p id="stat-sales" class="text-2xl sm:text-3xl font-extrabold text-white mt-2">0</p>
-                <span id="stat-top-movie" class="text-xs text-zinc-400 mt-1 block truncate">Mais vendido: —</span>
-            </div>
-
-            <div class="bg-cinema-900 border border-zinc-800 p-5 rounded-2xl shadow-lg">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Títulos no Catálogo</span>
-                    <div class="w-9 h-9 rounded-xl bg-cinema-red/10 flex items-center justify-center text-cinema-red">
-                        <i data-lucide="film" class="w-5 h-5"></i>
-                    </div>
-                </div>
-                <p id="stat-movies" class="text-2xl sm:text-3xl font-extrabold text-white mt-2">0</p>
-                <span class="text-xs text-zinc-500 mt-1 block">Filmes ativos na vitrine</span>
-            </div>
-
-            <div class="bg-cinema-900 border border-zinc-800 p-5 rounded-2xl shadow-lg">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Ticket Médio</span>
-                    <div class="w-9 h-9 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400">
-                        <i data-lucide="trending-up" class="w-5 h-5"></i>
-                    </div>
-                </div>
-                <p id="stat-ticket" class="text-2xl sm:text-3xl font-extrabold text-white mt-2">R$ 1,00</p>
-                <span class="text-xs text-zinc-500 mt-1 block">Preço unitário oficial: R$ 1,00</span>
-            </div>
-        </div>
-
-        <!-- Layout Principal Admin: Formulário + Gerenciamento -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Coluna Esquerda: Cadastro / Edição de Filme -->
-            <div class="lg:col-span-5">
-                <div class="bg-cinema-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-xl lg:sticky lg:top-24">
-                    <div class="flex items-center justify-between mb-5">
-                        <h2 id="form-title" class="text-lg font-bold text-white flex items-center gap-2">
-                            <i data-lucide="plus-circle" class="w-5 h-5 text-cinema-gold"></i>
-                            <span>Cadastrar Novo Filme</span>
-                        </h2>
-                        <button type="button" id="btn-cancel-edit" onclick="resetMovieForm()" class="hidden text-xs text-zinc-400 hover:text-white underline">Cancelar Edição</button>
-                    </div>
-
-                    <form id="movie-form" onsubmit="handleSaveMovie(event)" class="space-y-4">
-                        <input type="hidden" id="movie-id">
-
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Título do Filme *</label>
-                            <input type="text" id="movie-title" required placeholder="Ex: Resgate em Alta Velocidade"
-                                class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold">
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Gênero *</label>
-                                <select id="movie-genre" required
-                                    class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold">
-                                    <option value="Ação">Ação</option>
-                                    <option value="Ficção Científica">Ficção Científica</option>
-                                    <option value="Drama">Drama</option>
-                                    <option value="Suspense">Suspense</option>
-                                    <option value="Comédia">Comédia</option>
-                                    <option value="Terror">Terror</option>
-                                    <option value="Aventura">Aventura</option>
-                                    <option value="Documentário">Documentário</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Ano *</label>
-                                <input type="number" id="movie-year" required min="1900" max="2035" value="2026"
-                                    class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-3 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Duração *</label>
-                                <input type="text" id="movie-duration" required placeholder="1h 55m" value="1h 55m"
-                                    class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Classificação</label>
-                                <select id="movie-rating"
-                                    class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold">
-                                    <option value="L">Livre</option>
-                                    <option value="10">10 anos</option>
-                                    <option value="12">12 anos</option>
-                                    <option value="14" selected>14 anos</option>
-                                    <option value="16">16 anos</option>
-                                    <option value="18">18 anos</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-cinema-gold mb-1.5">Preço (R$) *</label>
-                                <input type="number" id="movie-price" required step="0.01" min="0" value="1.00"
-                                    class="w-full px-3.5 py-2.5 bg-zinc-950 border border-cinema-gold/50 rounded-xl text-sm font-bold text-cinema-gold focus:outline-none focus:border-cinema-gold">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Sinopse *</label>
-                            <textarea id="movie-synopsis" required rows="3" placeholder="Descreva a história do filme..."
-                                class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold"></textarea>
-                        </div>
-
-                        <!-- Capa do Filme -->
-                        <div class="p-3.5 bg-zinc-950/70 rounded-xl border border-zinc-800 space-y-2.5">
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400">Capa / Pôster</label>
-                            <input type="text" id="movie-poster" placeholder="URL da imagem ou use upload/gerador abaixo"
-                                class="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white focus:outline-none focus:border-cinema-gold">
-                            <div class="flex items-center justify-between gap-2">
-                                <label class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-xs font-medium text-zinc-200 cursor-pointer transition">
-                                    <i data-lucide="image-plus" class="w-4 h-4 text-cinema-gold"></i>
-                                    <span>Enviar Imagem</span>
-                                    <input type="file" id="poster-file-input" accept="image/*" onchange="handlePosterUpload(event)" class="hidden">
-                                </label>
-                                <button type="button" onclick="generateRandomPosterPlaceholder()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg text-xs text-zinc-300 hover:text-white transition">
-                                    Capa Auto
-                                </button>
-                            </div>
-                            <div id="poster-preview-box" class="hidden mt-2 relative w-24 h-36 rounded-lg overflow-hidden border border-zinc-700 mx-auto">
-                                <img id="poster-preview-img" src="" alt="Prévia" class="w-full h-full object-cover">
-                            </div>
-                        </div>
-
-                        <!-- Link do Filme Completo -->
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Link do Filme Completo (YouTube, Drive, Vimeo ou MP4)</label>
-                            <input type="text" id="movie-video" placeholder="https://youtu.be/... ou https://.../filme.mp4"
-                                class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold">
-                        </div>
-
-                        <!-- Link do Trailer Opcional -->
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Link do Trailer (Opcional para prévia gratuita)</label>
-                            <input type="text" id="movie-trailer" placeholder="https://youtu.be/... ou link .mp4 do trailer"
-                                class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold">
-                        </div>
-
-                        <div class="flex items-center gap-2 pt-1">
-                            <input type="checkbox" id="movie-featured" class="w-4 h-4 rounded bg-zinc-950 border-zinc-700 text-cinema-red focus:ring-cinema-red">
-                            <label for="movie-featured" class="text-xs text-zinc-300">Destacar este filme no banner principal</label>
-                        </div>
-
-                        <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-cinema-red to-red-700 hover:from-red-600 hover:to-red-800 text-white font-bold rounded-xl shadow-lg shadow-cinema-red/20 transition flex items-center justify-center gap-2">
-                            <i data-lucide="save" class="w-4 h-4"></i>
-                            <span id="btn-submit-text">Salvar Filme por R$ 1,00</span>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                  ${continueMovies
+                    .map(
+                      m => `
+                        <button class="btn btn-ghost btn-sm" onclick="openPlayer('${m.id}')">
+                          ▶ ${escapeHtml(m.title)} (${state.progress[m.id]}%)
                         </button>
-                    </form>
+                      `
+                    )
+                    .join("")}
                 </div>
+              </section>
+            `
+            : ""
+        }
+
+        <div id="catalogDynamic">
+          <div class="section-header">
+            <div class="section-title">${headingLabel} <span style="color:var(--muted); font-size:0.88rem; font-weight:500;">(${filtered.length})</span></div>
+          </div>
+
+          ${
+            filtered.length === 0
+              ? `
+                <div class="empty-state">
+                  <p style="margin-bottom:12px;">Nenhum filme encontrado para este filtro.</p>
+                  ${
+                    state.movies.length === 0
+                      ? `<button class="btn btn-cyan btn-sm" onclick="restoreSampleMovies()">Carregar Filmes de Exemplo</button>`
+                      : `<button class="btn btn-ghost btn-sm" onclick="state.search=''; state.genre='Todos'; state.view='catalog'; render();">Limpar filtros</button>`
+                  }
+                </div>
+              `
+              : `<div class="movies-grid">${filtered.map(renderMovieCard).join("")}</div>`
+          }
+        </div>
+      `;
+    }
+
+    function renderListOnly() {
+      const container = document.getElementById("catalogDynamic");
+      if (!container || state.view === "admin") return;
+      const filtered = getFilteredMovies();
+      const headingLabel =
+        state.view === "mine"
+          ? "Meus Filmes Liberados"
+          : state.view === "favorites"
+          ? "Minha Lista de Desejos"
+          : "Catálogo de Filmes";
+
+      container.innerHTML = `
+        <div class="section-header">
+          <div class="section-title">${headingLabel} <span style="color:var(--muted); font-size:0.88rem; font-weight:500;">(${filtered.length})</span></div>
+        </div>
+        ${
+          filtered.length === 0
+            ? `<div class="empty-state"><p>Nenhum filme encontrado.</p></div>`
+            : `<div class="movies-grid">${filtered.map(renderMovieCard).join("")}</div>`
+        }
+      `;
+    }
+
+    function renderAdminView() {
+      const totalRevenue = state.sales.reduce((acc, s) => acc + Number(s.amount || 0), 0);
+      const totalSales = state.sales.length;
+      const avgTicket = totalSales > 0 ? totalRevenue / totalSales : DEFAULT_PRICE;
+      const editing = state.editingMovieId
+        ? state.movies.find(m => m.id === state.editingMovieId)
+        : null;
+
+      return `
+        <section class="admin-panel">
+          <div class="section-header">
+            <div>
+              <h2 style="font-size:1.35rem; font-weight:800;">Painel Administrativo</h2>
+              <p style="color:var(--muted); font-size:0.85rem;">Gerencie filmes, preços, backup JSON e acompanhe vendas via Pix CPF ${PIX_KEY_FORMATTED}.</p>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn btn-ghost btn-sm" onclick="applyPriceToAll(1.00)">Aplicar R$ 1,00 em Todos</button>
+              <button class="btn btn-ghost btn-sm" onclick="exportJsonData()">Exportar JSON</button>
+              <label class="btn btn-cyan btn-sm" style="cursor:pointer;">
+                Importar JSON
+                <input type="file" accept=".json,application/json" style="display:none;" onchange="handleImportJson(event)" />
+              </label>
+              <button class="btn btn-ghost btn-sm" onclick="copyFullPageHtml()">Copiar HTML</button>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Faturamento Total</div>
+              <div class="stat-value" style="color:var(--green);">${formatBRL(totalRevenue)}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Filmes Vendidos</div>
+              <div class="stat-value">${totalSales}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Filmes no Catálogo</div>
+              <div class="stat-value">${state.movies.length}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Ticket Médio</div>
+              <div class="stat-value" style="color:var(--cyan);">${formatBRL(avgTicket)}</div>
+            </div>
+          </div>
+
+          <div class="admin-grid">
+            <div>
+              <h3 style="margin-bottom:12px; font-size:1.05rem;">
+                ${editing ? `Editar: ${escapeHtml(editing.title)}` : "Cadastrar Novo Filme"}
+              </h3>
+              <form onsubmit="saveMovieForm(event)">
+                <div class="form-group">
+                  <label>Título do Filme *</label>
+                  <input type="text" id="fTitle" class="input" required value="${editing ? escapeHtml(editing.title) : ""}" placeholder="Ex.: Missão Estelar" />
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Gênero</label>
+                    <input type="text" id="fGenre" class="input" value="${editing ? escapeHtml(editing.genre) : "Ação"}" placeholder="Ex.: Ação, Drama" />
+                  </div>
+                  <div class="form-group">
+                    <label>Ano</label>
+                    <input type="number" id="fYear" class="input" value="${editing ? editing.year : 2026}" />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Duração</label>
+                    <input type="text" id="fDuration" class="input" value="${editing ? escapeHtml(editing.duration) : "1h 45m"}" placeholder="Ex.: 1h 45m" />
+                  </div>
+                  <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" step="0.01" min="0" id="fPrice" class="input" value="${editing ? editing.price : "1.00"}" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>Link do Vídeo (YouTube, Google Drive, Vimeo ou .mp4)</label>
+                  <input type="text" id="fVideo" class="input" value="${editing ? escapeHtml(editing.videoUrl) : ""}" placeholder="https://... ou deixe vazio para tela VIP" />
+                </div>
+
+                <div class="form-group">
+                  <label>Link de Capa (URL ou upload local abaixo)</label>
+                  <input type="text" id="fPoster" class="input" value="${editing && editing.poster && !editing.poster.startsWith("data:") ? escapeHtml(editing.poster) : ""}" placeholder="https://... (opcional)" />
+                  <input type="file" id="fPosterFile" accept="image/*" style="margin-top:6px; font-size:0.8rem;" onchange="handlePosterUpload(event)" />
+                </div>
+
+                <div class="form-group">
+                  <label>Sinopse</label>
+                  <textarea id="fSynopsis" class="textarea" rows="3" placeholder="Resumo do filme...">${editing ? escapeHtml(editing.synopsis) : ""}</textarea>
+                </div>
+
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button type="submit" class="btn btn-primary">${editing ? "Salvar Alterações" : "Adicionar Filme"}</button>
+                  ${editing ? `<button type="button" class="btn btn-ghost" onclick="state.editingMovieId=null; render();">Cancelar Edição</button>` : ""}
+                </div>
+              </form>
             </div>
 
-            <!-- Coluna Direita: Lista de Filmes e Histórico de Vendas -->
-            <div class="lg:col-span-7 space-y-8">
-                <!-- Filmes Cadastrados -->
-                <div class="bg-cinema-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-xl">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                            <i data-lucide="list-video" class="w-5 h-5 text-cinema-red"></i>
-                            <span>Filmes Cadastrados</span>
-                        </h2>
-                        <span id="admin-movies-badge" class="text-xs px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-300 font-medium">0 títulos</span>
-                    </div>
-
-                    <div id="admin-movies-list" class="space-y-3 max-h-[460px] overflow-y-auto pr-1"></div>
-                </div>
-
-                <!-- Histórico de Vendas -->
-                <div class="bg-cinema-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-xl">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                            <i data-lucide="receipt" class="w-5 h-5 text-emerald-400"></i>
-                            <span>Histórico de Vendas (R$ 1,00)</span>
-                        </h2>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <button type="button" onclick="exportCSVReport()" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-medium transition">
-                                Exportar CSV
-                            </button>
-                            <button type="button" onclick="openModal('clear-sales-modal')" class="text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 font-medium transition">
-                                Limpar Vendas
-                            </button>
-                            <button type="button" onclick="openModal('reset-confirm-modal')" class="text-xs px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-red-950 text-zinc-400 hover:text-red-300 border border-zinc-700 transition">
-                                Resetar Padrão
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b border-zinc-800 text-[11px] uppercase tracking-wider text-zinc-400">
-                                    <th class="py-3 px-2">Data / Hora</th>
-                                    <th class="py-3 px-2">Filme</th>
-                                    <th class="py-3 px-2">Método</th>
-                                    <th class="py-3 px-2 text-right">Valor</th>
+            <div>
+              <h3 style="margin-bottom:12px; font-size:1.05rem;">Filmes Cadastrados (${state.movies.length})</h3>
+              <div class="table-wrap" style="margin-bottom:22px;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Filme</th>
+                      <th>Gênero</th>
+                      <th>Preço</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${
+                      state.movies.length === 0
+                        ? `<tr><td colspan="4" style="text-align:center; color:var(--muted);">Nenhum filme cadastrado.</td></tr>`
+                        : state.movies
+                            .map(
+                              m => `
+                                <tr>
+                                  <td><strong>${escapeHtml(m.title)}</strong> <span style="color:var(--muted);">(${m.year})</span></td>
+                                  <td>${escapeHtml(m.genre)}</td>
+                                  <td>${formatBRL(m.price)}</td>
+                                  <td style="white-space:nowrap;">
+                                    <button class="btn btn-ghost btn-sm" onclick="startEditMovie('${m.id}')">Editar</button>
+                                    <button class="btn btn-primary btn-sm" onclick="deleteMovie('${m.id}')">Excluir</button>
+                                  </td>
                                 </tr>
-                            </thead>
-                            <tbody id="sales-history-body" class="divide-y divide-zinc-800/60 text-sm"></tbody>
-                        </table>
-                    </div>
-                    <div id="empty-sales" class="text-center py-8 text-zinc-500 text-sm">
-                        Nenhuma venda registrada ainda. Quando um cliente liberar um filme por R$ 1,00, ela aparecerá aqui.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- ========================================== -->
-    <!-- MODAL DETALHES, TRAILER & AVALIAÇÕES       -->
-    <!-- ========================================== -->
-    <div id="details-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-sm overflow-y-auto">
-        <div class="bg-cinema-900 border border-zinc-800 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl my-auto">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800 bg-zinc-950/70">
-                <span class="text-xs font-bold uppercase tracking-wider text-cinema-gold">Detalhes do Filme & Avaliação</span>
-                <button type="button" onclick="closeModal('details-modal')" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <div class="p-5 sm:p-6 space-y-5 max-h-[82vh] overflow-y-auto">
-                <div class="flex flex-col sm:flex-row gap-5">
-                    <img id="details-poster" src="" alt="Capa" class="w-36 sm:w-44 aspect-[2/3] rounded-2xl object-cover bg-zinc-950 border border-zinc-800 mx-auto sm:mx-0 shrink-0">
-                    <div class="flex-1">
-                        <div class="flex flex-wrap items-center gap-2 text-xs text-zinc-400">
-                            <span id="details-genre" class="text-cinema-gold font-bold">Gênero</span>
-                            <span>•</span>
-                            <span id="details-year">2026</span>
-                            <span>•</span>
-                            <span id="details-duration">2h 00m</span>
-                            <span id="details-rating-badge" class="px-2 py-0.5 rounded bg-zinc-800 text-white font-bold">14</span>
-                        </div>
-                        <h3 id="details-title" class="text-xl sm:text-2xl font-extrabold text-white mt-1.5">Título</h3>
-                        <div id="details-stars-summary" class="flex items-center gap-2 mt-2 text-xs text-amber-400"></div>
-                        <p id="details-synopsis" class="text-sm text-zinc-300 mt-3 leading-relaxed"></p>
-
-                        <div id="details-actions" class="mt-5 flex flex-wrap items-center gap-2.5"></div>
-                    </div>
-                </div>
-
-                <!-- Área de Trailer Opcional -->
-                <div id="details-trailer-box" class="hidden rounded-2xl overflow-hidden border border-zinc-800 bg-black aspect-video"></div>
-
-                <!-- Avaliação dos Clientes (1-5 Estrelas + Comentário) -->
-                <div class="pt-4 border-t border-zinc-800">
-                    <h4 class="text-sm font-bold text-white flex items-center gap-2 mb-3">
-                        <i data-lucide="star" class="w-4 h-4 text-cinema-gold"></i>
-                        <span>Avaliações e Comentários</span>
-                    </h4>
-                    <form onsubmit="submitMovieReview(event)" class="bg-zinc-950 border border-zinc-800 rounded-2xl p-3.5 space-y-3 mb-4">
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                            <span class="text-xs text-zinc-400">Sua nota para este filme:</span>
-                            <div class="flex items-center gap-1" id="review-star-picker">
-                                <button type="button" onclick="setReviewRating(1)" class="review-star p-1 text-zinc-500 hover:text-amber-400" data-val="1">★</button>
-                                <button type="button" onclick="setReviewRating(2)" class="review-star p-1 text-zinc-500 hover:text-amber-400" data-val="2">★</button>
-                                <button type="button" onclick="setReviewRating(3)" class="review-star p-1 text-zinc-500 hover:text-amber-400" data-val="3">★</button>
-                                <button type="button" onclick="setReviewRating(4)" class="review-star p-1 text-zinc-500 hover:text-amber-400" data-val="4">★</button>
-                                <button type="button" onclick="setReviewRating(5)" class="review-star p-1 text-amber-400" data-val="5">★</button>
-                            </div>
-                        </div>
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <input type="text" id="review-comment-input" placeholder="Escreva um comentário curto sobre o filme..."
-                                class="flex-1 px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:border-cinema-gold">
-                            <button type="submit" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold rounded-xl transition shrink-0">
-                                Publicar Avaliação
-                            </button>
-                        </div>
-                    </form>
-                    <div id="details-reviews-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- MODAL CHECKOUT / PAGAMENTO PIX R$ 1,00     -->
-    <!-- ========================================== -->
-    <div id="checkout-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">
-        <div class="bg-cinema-900 border border-zinc-800 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl my-auto">
-            <div class="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-zinc-800 bg-zinc-950/60">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="lock-open" class="w-5 h-5 text-cinema-gold"></i>
-                    <h3 class="font-bold text-white">Desbloquear Filme • R$ 1,00</h3>
-                </div>
-                <button type="button" onclick="closeModal('checkout-modal')" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <div class="p-5 sm:p-6">
-                <div class="flex gap-4 p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800/80 mb-4">
-                    <img id="checkout-poster" src="" alt="Capa" class="w-16 h-24 rounded-xl object-cover bg-zinc-800 shrink-0">
-                    <div class="flex-1 min-w-0">
-                        <span id="checkout-genre" class="text-[11px] font-semibold uppercase tracking-wider text-cinema-gold">Gênero</span>
-                        <h4 id="checkout-title" class="text-base font-bold text-white truncate">Título do Filme</h4>
-                        <p id="checkout-meta" class="text-xs text-zinc-400 mt-0.5">2026 • 2h 10m</p>
-                        <div class="mt-2 flex items-baseline gap-1.5">
-                            <span class="text-xs text-zinc-400">Valor único:</span>
-                            <span id="checkout-price" class="text-lg font-extrabold text-emerald-400">R$ 1,00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Abas Método de Pagamento -->
-                <div class="grid grid-cols-2 gap-2 p-1 bg-zinc-950 rounded-xl border border-zinc-800 mb-4">
-                    <button type="button" id="pay-tab-pix" onclick="switchPaymentMethod('pix')" class="flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-600 text-white shadow transition">
-                        <i data-lucide="qr-code" class="w-4 h-4"></i>
-                        <span>Pix CPF Instantâneo</span>
-                    </button>
-                    <button type="button" id="pay-tab-card" onclick="switchPaymentMethod('card')" class="flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs sm:text-sm font-semibold text-zinc-400 hover:text-white transition">
-                        <i data-lucide="credit-card" class="w-4 h-4"></i>
-                        <span>Cartão de Crédito</span>
-                    </button>
-                </div>
-
-                <!-- Conteúdo PIX CPF -->
-                <div id="payment-pix-content" class="space-y-3.5">
-                    <div class="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                        <div>
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 block">Chave Pix (CPF Oficial)</span>
-                            <div class="flex items-center gap-2 mt-0.5">
-                                <span id="display-pix-cpf-formatted" class="text-base sm:text-lg font-extrabold font-mono text-white">058.504.666-22</span>
-                                <span class="text-xs text-zinc-400 font-mono">(<span id="display-pix-cpf-raw">05850466622</span>)</span>
-                            </div>
-                        </div>
-                        <button type="button" onclick="copyPixCpfKey()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shrink-0 shadow">
-                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                            <span>Copiar CPF</span>
-                        </button>
-                    </div>
-
-                    <div class="flex flex-col items-center">
-                        <div class="p-3 bg-white rounded-2xl shadow-inner border-2 border-emerald-500/30">
-                            <canvas id="pix-qr-canvas" width="144" height="144" class="block"></canvas>
-                        </div>
-                        <p class="text-center text-xs text-zinc-400 mt-2">Escaneie o QR Code de <strong class="text-emerald-400" id="qr-price-hint">R$ 1,00</strong> ou use o <strong class="text-zinc-200">Pix Copia e Cola</strong>:</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-1">Código Pix Copia e Cola (BR Code)</label>
-                        <div class="flex items-center gap-2">
-                            <input type="text" id="pix-copy-code" readonly value=""
-                                class="flex-1 px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-zinc-300 font-mono truncate">
-                            <button type="button" onclick="copyPixCode()" class="px-3.5 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shrink-0 border border-zinc-700">
-                                <i data-lucide="clipboard-copy" class="w-3.5 h-3.5 text-cinema-gold"></i>
-                                <span>Copiar Pix</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Conteúdo Cartão -->
-                <div id="payment-card-content" class="hidden space-y-3">
-                    <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Número do Cartão</label>
-                        <input type="text" id="card-number" value="4532 8910 2345 8890"
-                            class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs text-zinc-400 mb-1">Validade</label>
-                            <input type="text" value="12/29"
-                                class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-zinc-400 mb-1">CVV</label>
-                            <input type="text" value="842"
-                                class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-zinc-400 mb-1">Nome no Cartão</label>
-                        <input type="text" value="CLIENTE CINEPAY"
-                            class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white">
-                    </div>
-                </div>
-
-                <!-- Confirmar e Liberar Instantaneamente -->
-                <button type="button" onclick="confirmPayment()" id="btn-confirm-pay" class="w-full mt-5 py-3.5 px-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-zinc-950 font-extrabold rounded-xl shadow-lg shadow-emerald-500/25 transition flex items-center justify-center gap-2 text-xs sm:text-base">
-                    <i data-lucide="play-circle" class="w-5 h-5 shrink-0"></i>
-                    <span id="confirm-pay-label">Já realizei o Pix (R$ 1,00) • Liberar Vídeo Agora</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- MODAL PLAYER DE VÍDEO MULTI-FORMATO        -->
-    <!-- ========================================== -->
-    <div id="player-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-2 sm:p-5 bg-black/95 backdrop-blur-md">
-        <div id="player-card" class="bg-cinema-900 border border-zinc-800 rounded-2xl sm:rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl flex flex-col transition-all">
-            <!-- Topo Player -->
-            <div class="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-6 py-3 bg-zinc-950 border-b border-zinc-800">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-emerald-500/20 text-emerald-400 rounded border border-emerald-500/30 shrink-0">Liberado</span>
-                    <h3 id="player-title" class="font-bold text-white text-sm sm:text-base truncate">Título do Filme</h3>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <select id="player-speed-select" onchange="changePlaybackSpeed(this.value)" title="Velocidade de reprodução"
-                        class="px-2 py-1 rounded-lg bg-zinc-900 border border-zinc-700 text-xs text-zinc-200 focus:outline-none">
-                        <option value="0.75">0.75x</option>
-                        <option value="1" selected>1.0x</option>
-                        <option value="1.25">1.25x</option>
-                        <option value="1.5">1.5x</option>
-                        <option value="2">2.0x</option>
-                    </select>
-                    <button type="button" onclick="toggleTheaterMode()" title="Modo Teatro" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
-                        <i data-lucide="maximize-2" class="w-4 h-4"></i>
-                    </button>
-                    <button type="button" onclick="closePlayerModal()" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Área do Vídeo -->
-            <div id="player-screen-container" class="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden"></div>
-
-            <!-- Rodapé do Player com WhatsApp e Progresso -->
-            <div class="p-4 sm:p-5 bg-cinema-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <div class="flex flex-wrap items-center gap-2 text-xs text-zinc-400 mb-1">
-                        <span id="player-genre" class="text-cinema-gold font-semibold">Gênero</span>
-                        <span>•</span>
-                        <span id="player-year">2026</span>
-                        <span>•</span>
-                        <span id="player-duration">2h 00m</span>
-                        <span id="player-resume-badge" class="hidden px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 text-[11px] font-medium"></span>
-                    </div>
-                    <p id="player-synopsis" class="text-xs sm:text-sm text-zinc-300 line-clamp-2"></p>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <button type="button" id="btn-player-whatsapp" onclick="sendPlayerReceiptWhatsApp()" class="px-3.5 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
-                        <i data-lucide="message-circle" class="w-4 h-4"></i>
-                        <span>Comprovante WhatsApp</span>
-                    </button>
-                    <button type="button" onclick="closePlayerModal()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-xs sm:text-sm font-semibold rounded-xl transition">
-                        Fechar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- MODAL SENHA DO PAINEL ADMIN                -->
-    <!-- ========================================== -->
-    <div id="admin-auth-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-cinema-900 border border-zinc-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
-            <div class="w-12 h-12 rounded-2xl bg-cinema-gold/15 border border-cinema-gold/30 flex items-center justify-center text-cinema-gold mx-auto mb-4">
-                <i data-lucide="key-round" class="w-6 h-6"></i>
-            </div>
-            <h3 class="text-lg font-bold text-white text-center">Acesso Administrativo</h3>
-            <p class="text-xs text-zinc-400 text-center mt-1">Digite a senha PIN para gerenciar o catálogo e as vendas.</p>
-            <div class="mt-3 px-3 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-center">
-                <span class="text-[11px] text-zinc-400">PIN padrão: <strong class="text-cinema-gold font-mono">1234</strong></span>
-            </div>
-
-            <form onsubmit="verifyAdminPassword(event)" class="mt-4 space-y-4">
-                <input type="password" id="admin-password-input" placeholder="••••"
-                    class="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-xl text-center text-lg tracking-[0.5em] text-white focus:outline-none focus:border-cinema-gold">
-                <div class="flex gap-2">
-                    <button type="button" onclick="closeModal('admin-auth-modal')" class="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium rounded-xl transition">Cancelar</button>
-                    <button type="submit" class="flex-1 py-2.5 bg-cinema-gold hover:bg-amber-400 text-zinc-950 text-sm font-bold rounded-xl transition">Entrar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- MODAL OPÇÕES DE IMPORTAÇÃO JSON            -->
-    <!-- ========================================== -->
-    <div id="import-options-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-cinema-900 border border-zinc-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-            <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                    <i data-lucide="file-json" class="w-5 h-5"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-white">Importar Arquivo JSON</h3>
-                    <p id="import-summary-text" class="text-xs text-zinc-400">0 filmes detectados.</p>
-                </div>
-            </div>
-            <p class="text-xs text-zinc-300 leading-relaxed mt-2">
-                Deseja substituir o catálogo atual ou mesclar os novos filmes com os já existentes?
-            </p>
-            <div class="flex flex-col sm:flex-row gap-2.5 mt-5">
-                <button type="button" onclick="executeJsonImport('replace')" class="flex-1 py-2.5 px-3 bg-cinema-red hover:bg-red-700 text-white text-xs sm:text-sm font-bold rounded-xl transition">
-                    Substituir Catálogo
-                </button>
-                <button type="button" onclick="executeJsonImport('merge')" class="flex-1 py-2.5 px-3 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs sm:text-sm font-bold rounded-xl transition">
-                    Mesclar (Adicionar)
-                </button>
-            </div>
-            <button type="button" onclick="closeImportOptionsModal()" class="w-full mt-2 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium rounded-xl transition">
-                Cancelar Importação
-            </button>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- MODAIS DE CONFIRMAÇÃO (SEM CONFIRM())       -->
-    <!-- ========================================== -->
-    <div id="clear-sales-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-cinema-900 border border-zinc-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
-            <h3 class="text-lg font-bold text-white">Limpar Histórico de Vendas?</h3>
-            <p class="text-xs text-zinc-400 mt-2">Isso zerará o faturamento e a lista de vendas exibidos no painel, mantendo os filmes cadastrados.</p>
-            <div class="flex gap-2 mt-5">
-                <button type="button" onclick="closeModal('clear-sales-modal')" class="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium rounded-xl transition">Cancelar</button>
-                <button type="button" onclick="executeClearSales()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 text-sm font-bold rounded-xl transition">Limpar Vendas</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="reset-confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-cinema-900 border border-zinc-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
-            <h3 class="text-lg font-bold text-white">Restaurar Filmes Padrão?</h3>
-            <p class="text-xs text-zinc-400 mt-2">Restaura os filmes de exemplo a <strong class="text-emerald-400">R$ 1,00</strong> e a chave Pix CPF <strong class="text-cinema-gold">058.504.666-22</strong>.</p>
-            <div class="flex gap-2 mt-5">
-                <button type="button" onclick="closeModal('reset-confirm-modal')" class="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium rounded-xl transition">Cancelar</button>
-                <button type="button" onclick="executeFactoryReset()" class="flex-1 py-2.5 bg-cinema-red hover:bg-red-700 text-white text-sm font-bold rounded-xl transition">Restaurar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rodapé -->
-    <footer class="border-t border-zinc-900 bg-zinc-950 py-6 mt-auto">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-500">
-            <div class="flex flex-wrap items-center gap-2">
-                <span class="font-cinema font-bold text-zinc-300">CINEPAY PWA</span>
-                <span>• R$ 1,00 por filme • Pix CPF 058.504.666-22</span>
-            </div>
-            <p>Persistência local + fallback offline • Compatível com JSON e MP4/YouTube</p>
-        </div>
-    </footer>
-
-    <!-- ========================================== -->
-    <!-- LÓGICA COMPLETA DA APLICAÇÃO (JAVASCRIPT)  -->
-    <!-- ========================================== -->
-    <script>
-        const STORAGE_KEYS = {
-            MOVIES: 'cinepay_pwa_movies_v1',
-            UNLOCKED: 'cinepay_pwa_unlocked_v1',
-            FAVORITES: 'cinepay_pwa_favorites_v1',
-            SALES: 'cinepay_pwa_sales_v1',
-            SETTINGS: 'cinepay_pwa_settings_v1',
-            REVIEWS: 'cinepay_pwa_reviews_v1',
-            PROGRESS: 'cinepay_pwa_progress_v1',
-            ADMIN_AUTH: 'cinepay_pwa_admin_session_v1'
-        };
-
-        const DEFAULT_SETTINGS = {
-            pixKey: '05850466622',
-            pixReceiverName: 'CINEPAY LOCADORA',
-            whatsappPhone: '',
-            adminPassword: '1234'
-        };
-
-        // Pôster SVG embutido sem dependência de rede externa
-        function createCinemaPosterSVG(title, genre, bgTop, bgBottom, accentColor) {
-            const safeTitle = String(title || 'Filme').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            const safeGenre = String(genre || 'Cinema').toUpperCase().replace(/&/g, '&amp;').replace(/</g, '&lt;');
-            const words = safeTitle.split(' ');
-            let line1 = safeTitle;
-            let line2 = '';
-            if (words.length > 2) {
-                const mid = Math.ceil(words.length / 2);
-                line1 = words.slice(0, mid).join(' ');
-                line2 = words.slice(mid).join(' ');
-            }
-
-            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
-                <defs>
-                    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stop-color="${bgTop}"/>
-                        <stop offset="100%" stop-color="${bgBottom}"/>
-                    </linearGradient>
-                </defs>
-                <rect width="400" height="600" fill="url(#g)"/>
-                <circle cx="200" cy="210" r="115" fill="${accentColor}" fill-opacity="0.14"/>
-                <circle cx="200" cy="210" r="72" fill="none" stroke="${accentColor}" stroke-width="2" stroke-opacity="0.45"/>
-                <polygon points="186,184 228,210 186,236" fill="${accentColor}" fill-opacity="0.9"/>
-                <rect x="28" y="28" width="344" height="544" rx="18" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
-                <text x="200" y="74" font-family="Arial, sans-serif" font-size="13" font-weight="bold" letter-spacing="4" fill="${accentColor}" text-anchor="middle">${safeGenre}</text>
-                <text x="200" y="425" font-family="Georgia, serif" font-size="30" font-weight="bold" fill="#ffffff" text-anchor="middle">${line1}</text>
-                <text x="200" y="465" font-family="Georgia, serif" font-size="30" font-weight="bold" fill="#ffffff" text-anchor="middle">${line2}</text>
-                <rect x="130" y="505" width="140" height="32" rx="16" fill="${accentColor}"/>
-                <text x="200" y="526" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#09090b" text-anchor="middle">CINEPAY • R$ 1,00</text>
-            </svg>`;
-            return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-        }
-
-        // Filmes de Exemplo Iniciais (R$ 1,00 cada)
-        function buildSampleMovies() {
-            return [
-                {
-                    id: 'mov_sample_1',
-                    title: 'Horizonte de Néon',
-                    genre: 'Ficção Científica',
-                    year: 2026,
-                    duration: '2h 14m',
-                    rating: '14',
-                    price: 1.00,
-                    synopsis: 'Em uma metrópole cibernética submersa, um detetive de memórias descobre um código capaz de reescrever o destino da humanidade.',
-                    poster: createCinemaPosterSVG('Horizonte de Néon', 'Ficção Científica', '#0f172a', '#09090b', '#38bdf8'),
-                    videoUrl: '',
-                    trailerUrl: '',
-                    featured: true
-                },
-                {
-                    id: 'mov_sample_2',
-                    title: 'Código Implacável',
-                    genre: 'Ação',
-                    year: 2025,
-                    duration: '1h 58m',
-                    rating: '16',
-                    price: 1.00,
-                    synopsis: 'Quando um satélite militar é sequestrado em órbita, uma equipe de elite tem 90 minutos para impedir um blecaute global.',
-                    poster: createCinemaPosterSVG('Código Implacável', 'Ação', '#450a0a', '#09090b', '#ef4444'),
-                    videoUrl: '',
-                    trailerUrl: '',
-                    featured: false
-                },
-                {
-                    id: 'mov_sample_3',
-                    title: 'Sussurros na Neblina',
-                    genre: 'Suspense',
-                    year: 2026,
-                    duration: '2h 05m',
-                    rating: '14',
-                    price: 1.00,
-                    synopsis: 'Uma jornalista investiga o desaparecimento de um trem inteiro nas montanhas durante uma tempestade de inverno.',
-                    poster: createCinemaPosterSVG('Sussurros na Neblina', 'Suspense', '#1e1b4b', '#09090b', '#a855f7'),
-                    videoUrl: '',
-                    trailerUrl: '',
-                    featured: false
-                },
-                {
-                    id: 'mov_sample_4',
-                    title: 'O Último Acorde',
-                    genre: 'Drama',
-                    year: 2025,
-                    duration: '2h 10m',
-                    rating: '12',
-                    price: 1.00,
-                    synopsis: 'A emocionante jornada de um maestro aposentado que reencontra sua paixão pela música ao reger uma orquestra comunitária.',
-                    poster: createCinemaPosterSVG('O Último Acorde', 'Drama', '#422006', '#09090b', '#f59e0b'),
-                    videoUrl: '',
-                    trailerUrl: '',
-                    featured: false
-                },
-                {
-                    id: 'mov_sample_5',
-                    title: 'Expedição Abismo Azul',
-                    genre: 'Documentário',
-                    year: 2026,
-                    duration: '1h 42m',
-                    rating: 'L',
-                    price: 1.00,
-                    synopsis: 'Imagens inéditas revelam ecossistemas bioluminescentes nas fossas oceânicas mais profundas do planeta.',
-                    poster: createCinemaPosterSVG('Expedição Abismo Azul', 'Documentário', '#064e3b', '#09090b', '#10b981'),
-                    videoUrl: '',
-                    trailerUrl: '',
-                    featured: false
-                },
-                {
-                    id: 'mov_sample_6',
-                    title: 'Férias em Dobro',
-                    genre: 'Comédia',
-                    year: 2025,
-                    duration: '1h 48m',
-                    rating: '10',
-                    price: 1.00,
-                    synopsis: 'Duas famílias completamente opostas reservam por engano a mesma mansão à beira-mar durante o feriado.',
-                    poster: createCinemaPosterSVG('Férias em Dobro', 'Comédia', '#701a75', '#09090b', '#f472b6'),
-                    videoUrl: '',
-                    trailerUrl: '',
-                    featured: false
-                }
-            ];
-        }
-
-        let state = {
-            movies: [],
-            unlockedIds: [],
-            favoriteIds: [],
-            sales: [],
-            reviews: {},
-            progress: {},
-            settings: { ...DEFAULT_SETTINGS },
-            selectedGenre: 'Todos',
-            catalogTab: 'all', // 'all' | 'unlocked' | 'favorites'
-            checkoutMovieId: null,
-            detailsMovieId: null,
-            playerMovieId: null,
-            selectedReviewRating: 5,
-            paymentMethod: 'pix',
-            isAdminAuthenticated: false,
-            pendingImportData: null
-        };
-
-        // Fallback IndexedDB leve para maior resiliência offline
-        function saveIndexedDBFallback(key, value) {
-            try {
-                if (!('indexedDB' in window)) return;
-                const req = indexedDB.open('CinePayOfflineDB', 1);
-                req.onupgradeneeded = () => {
-                    const db = req.result;
-                    if (!db.objectStoreNames.contains('store')) {
-                        db.createObjectStore('store');
+                              `
+                            )
+                            .join("")
                     }
-                };
-                req.onsuccess = () => {
-                    const db = req.result;
-                    const tx = db.transaction('store', 'readwrite');
-                    tx.objectStore('store').put(JSON.stringify(value), key);
-                };
-            } catch (_) {
-                // Ignora bloqueios de sandbox
-            }
-        }
+                  </tbody>
+                </table>
+              </div>
 
-        // Injeta Web App Manifest dinâmico para suporte PWA sem arquivos externos
-        function injectDynamicManifest() {
-            try {
-                const manifest = {
-                    name: 'CinePay PWA • Filmes por R$ 1,00',
-                    short_name: 'CinePay',
-                    start_url: '.',
-                    display: 'standalone',
-                    background_color: '#09090b',
-                    theme_color: '#e50914',
-                    icons: [
-                        {
-                            src: createCinemaPosterSVG('CinePay', 'Cinema', '#e50914', '#09090b', '#f59e0b'),
-                            sizes: '192x192',
-                            type: 'image/svg+xml'
-                        }
-                    ]
-                };
-                const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('link');
-                link.rel = 'manifest';
-                link.href = url;
-                document.head.appendChild(link);
-            } catch (_) {
-                // Sem efeito colateral
-            }
-        }
+              <h3 style="margin-bottom:10px; font-size:1.05rem;">Histórico de Vendas (${state.sales.length})</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Data/Hora</th>
+                      <th>Filme</th>
+                      <th>Pix CPF</th>
+                      <th>Valor</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${
+                      state.sales.length === 0
+                        ? `<tr><td colspan="4" style="text-align:center; color:var(--muted);">Nenhuma venda registrada ainda.</td></tr>`
+                        : [...state.sales]
+                            .reverse()
+                            .slice(0, 15)
+                            .map(
+                              s => `
+                                <tr>
+                                  <td>${escapeHtml(s.date)}</td>
+                                  <td>${escapeHtml(s.movieTitle)}</td>
+                                  <td>${PIX_KEY_FORMATTED}</td>
+                                  <td style="color:var(--green); font-weight:700;">${formatBRL(s.amount)}</td>
+                                </tr>
+                              `
+                            )
+                            .join("")
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            injectDynamicManifest();
-            loadStateFromStorage();
-            updateOnlineBadge();
-            window.addEventListener('online', updateOnlineBadge);
-            window.addEventListener('offline', updateOnlineBadge);
-            lucide.createIcons();
-            renderAll();
+    function render() {
+      updateBadges();
+      const viewEl = document.getElementById("appView");
+      if (state.view === "admin") {
+        viewEl.innerHTML = renderAdminView();
+      } else {
+        viewEl.innerHTML = renderCatalogView();
+      }
+    }
+
+    /* Admin Actions */
+    function openAdminGate() {
+      if (state.view === "admin") {
+        setView("catalog");
+        return;
+      }
+      document.getElementById("adminPassInput").value = "";
+      document.getElementById("adminPassModal").classList.add("open");
+      setTimeout(() => document.getElementById("adminPassInput").focus(), 80);
+    }
+
+    function verifyAdminPass() {
+      const typed = document.getElementById("adminPassInput").value;
+      const savedPass = localStorage.getItem(STORAGE_KEYS.adminPass) || ADMIN_PASS_DEFAULT;
+      if (typed === savedPass || typed === ADMIN_PASS_DEFAULT) {
+        closeModal("adminPassModal");
+        state.view = "admin";
+        render();
+        showToast("Painel Administrativo aberto");
+      } else {
+        showToast("Senha incorreta (padrão: 1234)");
+      }
+    }
+
+    let uploadedPosterBase64 = "";
+
+    function handlePosterUpload(ev) {
+      const file = ev.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          const maxW = 500;
+          const scale = Math.min(1, maxW / img.width);
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          uploadedPosterBase64 = canvas.toDataURL("image/jpeg", 0.82);
+          showToast("Capa carregada e otimizada");
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveMovieForm(ev) {
+      ev.preventDefault();
+      const title = document.getElementById("fTitle").value.trim();
+      if (!title) return;
+
+      const genre = document.getElementById("fGenre").value.trim() || "Geral";
+      const year = Number(document.getElementById("fYear").value) || 2026;
+      const duration = document.getElementById("fDuration").value.trim() || "1h 40m";
+      const priceVal = Number(document.getElementById("fPrice").value);
+      const price = Number.isFinite(priceVal) && priceVal >= 0 ? Number(priceVal.toFixed(2)) : DEFAULT_PRICE;
+      const videoUrl = document.getElementById("fVideo").value.trim();
+      const posterInputUrl = document.getElementById("fPoster").value.trim();
+      const synopsis = document.getElementById("fSynopsis").value.trim() || "Filme disponível na plataforma CinePay.";
+
+      if (state.editingMovieId) {
+        const idx = state.movies.findIndex(m => m.id === state.editingMovieId);
+        if (idx >= 0) {
+          const existingPoster = state.movies[idx].poster;
+          state.movies[idx] = {
+            ...state.movies[idx],
+            title,
+            genre,
+            year,
+            duration,
+            price,
+            videoUrl,
+            synopsis,
+            poster: uploadedPosterBase64 || posterInputUrl || existingPoster || ""
+          };
+        }
+        state.editingMovieId = null;
+        showToast("Filme atualizado com sucesso!");
+      } else {
+        state.movies.unshift({
+          id: `m-${Date.now()}`,
+          title,
+          genre,
+          year,
+          duration,
+          price,
+          videoUrl,
+          synopsis,
+          poster: uploadedPosterBase64 || posterInputUrl || "",
+          trailerUrl: ""
         });
+        showToast("Novo filme adicionado ao catálogo!");
+      }
 
-        function updateOnlineBadge() {
-            const badge = document.getElementById('offline-status-badge');
-            if (!badge) return;
-            if (navigator.onLine) {
-                badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold';
-                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>Online + Salvo Local</span>';
-            } else {
-                badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 font-semibold';
-                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span><span>Modo Offline Ativo</span>';
+      uploadedPosterBase64 = "";
+      saveState();
+      render();
+    }
+
+    function startEditMovie(id) {
+      uploadedPosterBase64 = "";
+      state.editingMovieId = id;
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function deleteMovie(id) {
+      state.movies = state.movies.filter(m => m.id !== id);
+      if (state.editingMovieId === id) state.editingMovieId = null;
+      saveState();
+      render();
+      showToast("Filme removido");
+    }
+
+    function applyPriceToAll(newPrice) {
+      state.movies = state.movies.map(m => ({ ...m, price: Number(newPrice.toFixed(2)) }));
+      saveState();
+      render();
+      showToast(`Todos os filmes agora custam ${formatBRL(newPrice)}`);
+    }
+
+    function restoreSampleMovies() {
+      state.movies = [...SAMPLE_MOVIES];
+      saveState();
+      render();
+      showToast("Filmes de exemplo carregados!");
+    }
+
+    /* Export / Import JSON */
+    function exportJsonData() {
+      const payload = {
+        app: "CinePay",
+        pixCpf: PIX_KEY_RAW,
+        exportedAt: new Date().toISOString(),
+        movies: state.movies,
+        unlocked: state.unlocked,
+        favorites: state.favorites,
+        sales: state.sales,
+        progress: state.progress,
+        reviews: state.reviews
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `cinepay-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Backup JSON exportado!");
+    }
+
+    function handleImportJson(ev) {
+      const file = ev.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          let incomingMovies = [];
+
+          if (Array.isArray(parsed)) {
+            incomingMovies = parsed.map((item, i) => normalizeMovie(item, i));
+          } else if (parsed && typeof parsed === "object") {
+            if (Array.isArray(parsed.movies)) {
+              incomingMovies = parsed.movies.map((item, i) => normalizeMovie(item, i));
             }
-        }
+            if (Array.isArray(parsed.unlocked)) state.unlocked = parsed.unlocked.map(String);
+            if (Array.isArray(parsed.favorites)) state.favorites = parsed.favorites.map(String);
+            if (Array.isArray(parsed.sales)) state.sales = parsed.sales;
+            if (parsed.progress && typeof parsed.progress === "object") state.progress = parsed.progress;
+            if (parsed.reviews && typeof parsed.reviews === "object") state.reviews = parsed.reviews;
+          }
 
-        function loadStateFromStorage() {
-            try {
-                const storedMovies = localStorage.getItem(STORAGE_KEYS.MOVIES);
-                if (storedMovies) {
-                    const parsed = JSON.parse(storedMovies);
-                    state.movies = Array.isArray(parsed) && parsed.length > 0 ? parsed : buildSampleMovies();
-                } else {
-                    state.movies = buildSampleMovies();
-                    saveMoviesToStorage();
-                }
+          if (incomingMovies.length === 0 && !parsed.movies) {
+            showToast("JSON válido, mas nenhum filme encontrado");
+            return;
+          }
 
-                state.unlockedIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.UNLOCKED) || '[]');
-                state.favoriteIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.FAVORITES) || '[]');
-                state.sales = JSON.parse(localStorage.getItem(STORAGE_KEYS.SALES) || '[]');
-                state.reviews = JSON.parse(localStorage.getItem(STORAGE_KEYS.REVIEWS) || '{}');
-                state.progress = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROGRESS) || '{}');
+          const mergeMode = confirm(
+            `Encontrados ${incomingMovies.length} filme(s) no JSON.\n\nClique em OK para MESCLAR com o catálogo atual ou CANCELAR para SUBSTITUIR o catálogo.`
+          );
 
-                const storedSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-                state.settings = storedSettings ? { ...DEFAULT_SETTINGS, ...JSON.parse(storedSettings) } : { ...DEFAULT_SETTINGS };
-                if (!storedSettings) saveSettingsToStorage();
-
-                state.isAdminAuthenticated = sessionStorage.getItem(STORAGE_KEYS.ADMIN_AUTH) === 'true';
-            } catch (err) {
-                console.error('Erro ao carregar dados:', err);
-                state.movies = buildSampleMovies();
-                state.settings = { ...DEFAULT_SETTINGS };
+          if (mergeMode) {
+            const map = new Map(state.movies.map(m => [m.id, m]));
+            for (const m of incomingMovies) {
+              map.set(m.id, m);
             }
+            state.movies = Array.from(map.values());
+          } else {
+            state.movies = incomingMovies;
+          }
+
+          saveState();
+          render();
+          showToast(`JSON importado com sucesso (${state.movies.length} filmes)!`);
+        } catch (err) {
+          showToast("Erro ao ler o arquivo JSON. Verifique o formato.");
+        } finally {
+          ev.target.value = "";
         }
+      };
+      reader.readAsText(file);
+    }
 
-        function saveMoviesToStorage() {
-            localStorage.setItem(STORAGE_KEYS.MOVIES, JSON.stringify(state.movies));
-            saveIndexedDBFallback(STORAGE_KEYS.MOVIES, state.movies);
-        }
+    function copyFullPageHtml() {
+      const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+      navigator.clipboard?.writeText(html).then(
+        () => showToast("Código HTML completo copiado!"),
+        () => showToast("Não foi possível copiar automaticamente neste navegador.")
+      );
+    }
 
-        function saveUnlockedToStorage() {
-            localStorage.setItem(STORAGE_KEYS.UNLOCKED, JSON.stringify(state.unlockedIds));
-            saveIndexedDBFallback(STORAGE_KEYS.UNLOCKED, state.unlockedIds);
-        }
+    /* Details & Reviews */
+    function openDetails(movieId) {
+      const m = state.movies.find(item => item.id === movieId);
+      if (!m) return;
+      const isUnlocked = state.unlocked.includes(m.id);
+      const isFav = state.favorites.includes(m.id);
+      const movieReviews = state.reviews[m.id] || [];
 
-        function saveFavoritesToStorage() {
-            localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(state.favoriteIds));
-        }
+      document.getElementById("detailsTitle").textContent = m.title;
+      document.getElementById("detailsBody").innerHTML = `
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px;">
+          <div>
+            <img src="${getPoster(m)}" alt="${escapeHtml(m.title)}" style="width:100%; border-radius:12px; display:block;" />
+          </div>
+          <div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+              <span class="tag tag-price">${escapeHtml(m.genre)}</span>
+              <span class="tag tag-price">${m.year}</span>
+              <span class="tag tag-price">${escapeHtml(m.duration)}</span>
+              <span class="tag ${isUnlocked ? "tag-unlocked" : "tag-price"}">${isUnlocked ? "Liberado" : formatBRL(m.price)}</span>
+            </div>
+            <p style="color:var(--muted); font-size:0.9rem; margin-bottom:16px;">${escapeHtml(m.synopsis)}</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;">
+              ${
+                isUnlocked
+                  ? `<button class="btn btn-green" onclick="closeModal('detailsModal'); openPlayer('${m.id}');">▶ Assistir Agora</button>`
+                  : `<button class="btn btn-cyan" onclick="closeModal('detailsModal'); openCheckout('${m.id}');">Pagar ${formatBRL(m.price)} via Pix CPF</button>`
+              }
+              <button class="btn btn-ghost" onclick="toggleFavorite('${m.id}'); openDetails('${m.id}');">
+                ${isFav ? "♥ Favoritado" : "♡ Favoritar"}
+              </button>
+            </div>
 
-        function saveSalesToStorage() {
-            localStorage.setItem(STORAGE_KEYS.SALES, JSON.stringify(state.sales));
-            saveIndexedDBFallback(STORAGE_KEYS.SALES, state.sales);
-        }
-
-        function saveReviewsToStorage() {
-            localStorage.setItem(STORAGE_KEYS.REVIEWS, JSON.stringify(state.reviews));
-        }
-
-        function saveProgressToStorage() {
-            localStorage.setItem(STORAGE_KEYS.PROGRESS, JSON.stringify(state.progress));
-        }
-
-        function saveSettingsToStorage() {
-            localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(state.settings));
-            saveIndexedDBFallback(STORAGE_KEYS.SETTINGS, state.settings);
-        }
-
-        function formatCPF(cpf) {
-            const digits = String(cpf || '').replace(/\D/g, '');
-            if (digits.length === 11) {
-                return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-            }
-            return cpf || '058.504.666-22';
-        }
-
-        function formatBRL(value) {
-            return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
-
-        // Gerador EMV Pix Copia e Cola (BR Code com CRC16-CCITT)
-        function generatePixPayload(pixKey, receiverName, city, amount, txId) {
-            const cleanKey = String(pixKey || '05850466622').replace(/\D/g, '') || '05850466622';
-            const cleanName = (receiverName || 'CINEPAY LOCADORA').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9 ]/g, '').toUpperCase().slice(0, 25) || 'CINEPAY';
-            const cleanCity = (city || 'SAO PAULO').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9 ]/g, '').toUpperCase().slice(0, 15) || 'BRASIL';
-            const formattedAmount = Number(amount !== undefined ? amount : 1.00).toFixed(2);
-            const cleanTxId = (txId || 'CINEPAY01').replace(/[^a-zA-Z0-9]/g, '').slice(0, 25) || '***';
-
-            const f = (id, val) => id + String(val.length).padStart(2, '0') + val;
-            const merchantAccount = f('00', 'br.gov.bcb.pix') + f('01', cleanKey);
-            const additionalData = f('05', cleanTxId);
-
-            let payload =
-                f('00', '01') +
-                f('26', merchantAccount) +
-                f('52', '0000') +
-                f('53', '986') +
-                f('54', formattedAmount) +
-                f('58', 'BR') +
-                f('59', cleanName) +
-                f('60', cleanCity) +
-                f('62', additionalData) +
-                '6304';
-
-            let crc = 0xFFFF;
-            for (let i = 0; i < payload.length; i++) {
-                crc ^= payload.charCodeAt(i) << 8;
-                for (let j = 0; j < 8; j++) {
-                    crc = (crc & 0x8000) !== 0 ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF;
-                }
-            }
-            return payload + crc.toString(16).toUpperCase().padStart(4, '0');
-        }
-
-        function drawPixQrCanvas(payloadText) {
-            const canvas = document.getElementById('pix-qr-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const size = canvas.width;
-            const modules = 29;
-            const cell = size / modules;
-
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, size, size);
-
-            let seed = 0;
-            for (let i = 0; i < payloadText.length; i++) {
-                seed = ((seed << 5) - seed + payloadText.charCodeAt(i)) | 0;
-            }
-
-            const isFinder = (r, c) => (r < 7 && c < 7) || (r < 7 && c >= modules - 7) || (r >= modules - 7 && c < 7);
-            const drawFinder = (startR, startC) => {
-                ctx.fillStyle = '#09090b';
-                ctx.fillRect(startC * cell, startR * cell, 7 * cell, 7 * cell);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect((startC + 1) * cell, (startR + 1) * cell, 5 * cell, 5 * cell);
-                ctx.fillStyle = '#09090b';
-                ctx.fillRect((startC + 2) * cell, (startR + 2) * cell, 3 * cell, 3 * cell);
-            };
-
-            drawFinder(0, 0);
-            drawFinder(0, modules - 7);
-            drawFinder(modules - 7, 0);
-
-            ctx.fillStyle = '#09090b';
-            for (let r = 0; r < modules; r++) {
-                for (let c = 0; c < modules; c++) {
-                    if (isFinder(r, c)) continue;
-                    if (r === 7 && (c < 8 || c >= modules - 8)) continue;
-                    if (c === 7 && (r < 8 || r >= modules - 8)) continue;
-
-                    const charCode = payloadText.charCodeAt((r * modules + c) % payloadText.length);
-                    const bit = ((charCode ^ (seed >> ((r + c) % 16))) + r * 3 + c * 7) % 2 === 0;
-                    if (bit) {
-                        ctx.fillRect(Math.floor(c * cell), Math.floor(r * cell), Math.ceil(cell), Math.ceil(cell));
-                    }
-                }
-            }
-        }
-
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const styles = {
-                success: 'bg-zinc-900 border-emerald-500/50 text-emerald-300',
-                error: 'bg-zinc-900 border-red-500/50 text-red-300',
-                info: 'bg-zinc-900 border-cinema-gold/50 text-amber-200'
-            };
-            const icons = {
-                success: 'check-circle-2',
-                error: 'alert-circle',
-                info: 'sparkles'
-            };
-            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl border shadow-2xl backdrop-blur-md transition-all duration-300 transform translate-y-2 opacity-0 ${styles[type] || styles.info}`;
-            toast.innerHTML = `
-                <i data-lucide="${icons[type] || 'info'}" class="w-5 h-5 shrink-0"></i>
-                <span class="text-xs sm:text-sm font-medium text-white">${message}</span>
-            `;
-            container.appendChild(toast);
-            lucide.createIcons();
-            requestAnimationFrame(() => toast.classList.remove('translate-y-2', 'opacity-0'));
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 3400);
-        }
-
-        function openModal(id) {
-            const m = document.getElementById(id);
-            if (!m) return;
-            m.classList.remove('hidden');
-            m.classList.add('flex');
-            lucide.createIcons();
-        }
-
-        function closeModal(id) {
-            const m = document.getElementById(id);
-            if (!m) return;
-            m.classList.add('hidden');
-            m.classList.remove('flex');
-        }
-
-        function renderAll() {
-            updateHeaderCounters();
-            renderHeroBanner();
-            renderGenreFilters();
-            updateCatalogTabStyles();
-            renderCatalog();
-            renderAdminDashboard();
-            lucide.createIcons();
-        }
-
-        function updateHeaderCounters() {
-            const validUnlocked = state.unlockedIds.filter(id => state.movies.some(m => m.id === id));
-            const validFavorites = state.favoriteIds.filter(id => state.movies.some(m => m.id === id));
-            document.getElementById('unlocked-count-badge').textContent = validUnlocked.length;
-            document.getElementById('favorites-count-badge').textContent = validFavorites.length;
-        }
-
-        function setCatalogTab(tab) {
-            switchView('client');
-            state.catalogTab = tab;
-            updateCatalogTabStyles();
-            renderCatalog();
-        }
-
-        function updateCatalogTabStyles() {
-            const tabs = ['all', 'unlocked', 'favorites'];
-            tabs.forEach(t => {
-                const el = document.getElementById(`filter-tab-${t}`);
-                if (!el) return;
-                if (state.catalogTab === t) {
-                    el.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-cinema-red text-white transition whitespace-nowrap shadow';
-                } else {
-                    el.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition whitespace-nowrap';
-                }
-            });
-
-            const heading = document.getElementById('catalog-heading');
-            if (state.catalogTab === 'unlocked') {
-                heading.textContent = 'Meus Filmes Liberados';
-            } else if (state.catalogTab === 'favorites') {
-                heading.textContent = 'Minha Lista de Desejos';
-            } else {
-                heading.textContent = state.selectedGenre === 'Todos' ? 'Catálogo Disponível • R$ 1,00' : `Filmes de ${state.selectedGenre} • R$ 1,00`;
-            }
-        }
-
-        function toggleFavorite(movieId) {
-            const idx = state.favoriteIds.indexOf(movieId);
-            if (idx === -1) {
-                state.favoriteIds.push(movieId);
-                showToast('Adicionado à Lista de Desejos!', 'info');
-            } else {
-                state.favoriteIds.splice(idx, 1);
-                showToast('Removido da Lista de Desejos.', 'info');
-            }
-            saveFavoritesToStorage();
-            updateHeaderCounters();
-            renderCatalog();
-        }
-
-        function loadSampleMoviesNow() {
-            state.movies = buildSampleMovies();
-            saveMoviesToStorage();
-            state.selectedGenre = 'Todos';
-            state.catalogTab = 'all';
-            document.getElementById('search-input').value = '';
-            renderAll();
-            showToast('Filmes de exemplo carregados por R$ 1,00!', 'success');
-        }
-
-        function getAverageRating(movieId) {
-            const list = state.reviews[movieId] || [];
-            if (list.length === 0) return { avg: 0, count: 0 };
-            const sum = list.reduce((acc, r) => acc + Number(r.rating || 5), 0);
-            return { avg: (sum / list.length).toFixed(1), count: list.length };
-        }
-
-        // ==========================================
-        // RENDERIZAÇÃO DO CATÁLOGO CLIENTE
-        // ==========================================
-        function renderHeroBanner() {
-            const hero = document.getElementById('hero-section');
-            if (!state.movies.length) {
-                hero.innerHTML = '';
-                return;
-            }
-            const featured = state.movies.find(m => m.featured) || state.movies[0];
-            const isUnlocked = state.unlockedIds.includes(featured.id);
-            const isFav = state.favoriteIds.includes(featured.id);
-            const fallback = createCinemaPosterSVG(featured.title, featured.genre, '#18181b', '#09090b', '#f59e0b');
-
-            hero.innerHTML = `
-                <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10 relative z-10">
-                    <div class="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
-                        <div class="w-40 sm:w-52 shrink-0 rounded-2xl overflow-hidden shadow-2xl border border-zinc-700/80">
-                            <img src="${featured.poster}" alt="${featured.title}" onerror="this.src='${fallback}'" class="w-full aspect-[2/3] object-cover">
-                        </div>
-                        <div class="flex-1 text-center md:text-left">
-                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cinema-gold/15 border border-cinema-gold/30 text-cinema-gold text-xs font-bold uppercase tracking-wider mb-2.5">
-                                <i data-lucide="flame" class="w-3.5 h-3.5"></i>
-                                <span>Destaque • Apenas ${formatBRL(featured.price)}</span>
+            <h4 style="font-size:0.95rem; margin-bottom:8px;">Avaliações (${movieReviews.length})</h4>
+            <div style="margin-bottom:12px;">
+              ${
+                movieReviews.length === 0
+                  ? `<p style="font-size:0.82rem; color:var(--muted);">Seja o primeiro a avaliar este filme.</p>`
+                  : movieReviews
+                      .map(
+                        r => `
+                          <div class="review-item">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                              <strong>${escapeHtml(r.author || "Espectador")}</strong>
+                              <span style="color:var(--amber);">★ ${r.rating}/5</span>
                             </div>
-                            <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">${featured.title}</h1>
-                            <div class="flex flex-wrap items-center justify-center md:justify-start gap-2.5 text-xs sm:text-sm text-zinc-400 mt-2.5">
-                                <span class="px-2 py-0.5 rounded bg-zinc-800 text-zinc-200 font-bold">${featured.rating === 'L' ? 'Livre' : featured.rating + ' anos'}</span>
-                                <span>${featured.genre}</span>
-                                <span>•</span>
-                                <span>${featured.year}</span>
-                                <span>•</span>
-                                <span>${featured.duration}</span>
-                            </div>
-                            <p class="text-sm text-zinc-300 mt-3 max-w-2xl leading-relaxed">${featured.synopsis}</p>
+                            <div style="color:var(--muted);">${escapeHtml(r.comment)}</div>
+                          </div>
+                        `
+                      )
+                      .join("")
+              }
+            </div>
 
-                            <div class="mt-5 flex flex-wrap items-center justify-center md:justify-start gap-2.5">
-                                ${isUnlocked ? `
-                                    <button type="button" onclick="openPlayerModal('${featured.id}')" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-extrabold text-sm shadow-lg transition flex items-center gap-2">
-                                        <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-                                        <span>Assistir Filme Agora</span>
-                                    </button>
-                                ` : `
-                                    <button type="button" onclick="openCheckoutModal('${featured.id}')" class="gold-glow px-5 py-3 rounded-xl bg-gradient-to-r from-cinema-gold to-amber-500 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-extrabold text-sm transition flex items-center gap-2">
-                                        <i data-lucide="unlock" class="w-4 h-4"></i>
-                                        <span>Desbloquear por ${formatBRL(featured.price)}</span>
-                                    </button>
-                                `}
-                                <button type="button" onclick="openDetailsModal('${featured.id}')" class="px-4 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-sm transition flex items-center gap-1.5">
-                                    <i data-lucide="info" class="w-4 h-4 text-cinema-gold"></i>
-                                    <span>Detalhes & Trailer</span>
-                                </button>
-                                <button type="button" onclick="toggleFavorite('${featured.id}')" class="p-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white transition" title="Favoritar">
-                                    <i data-lucide="heart" class="w-4 h-4 ${isFav ? 'text-rose-400 fill-current' : 'text-zinc-300'}"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+            <form onsubmit="addReview(event, '${m.id}')">
+              <div class="form-row" style="margin-bottom:8px;">
+                <input type="text" id="revAuthor" class="input" placeholder="Seu nome (opcional)" />
+                <select id="revRating" class="select">
+                  <option value="5">★★★★★ (5/5)</option>
+                  <option value="4">★★★★☆ (4/5)</option>
+                  <option value="3">★★★☆☆ (3/5)</option>
+                  <option value="2">★★☆☆☆ (2/5)</option>
+                  <option value="1">★☆☆☆☆ (1/5)</option>
+                </select>
+              </div>
+              <input type="text" id="revComment" class="input" required placeholder="Escreva um comentário..." style="margin-bottom:8px;" />
+              <button type="submit" class="btn btn-ghost btn-sm">Enviar Avaliação</button>
+            </form>
+          </div>
+        </div>
+      `;
+      document.getElementById("detailsModal").classList.add("open");
+    }
 
-        function renderGenreFilters() {
-            const container = document.getElementById('genre-filters');
-            const genres = ['Todos', ...new Set(state.movies.map(m => m.genre))];
+    function addReview(ev, movieId) {
+      ev.preventDefault();
+      const author = document.getElementById("revAuthor").value.trim() || "Cliente CinePay";
+      const rating = Number(document.getElementById("revRating").value) || 5;
+      const comment = document.getElementById("revComment").value.trim();
+      if (!comment) return;
 
-            container.innerHTML = genres.map(genre => {
-                const active = state.selectedGenre === genre;
-                return `
-                    <button type="button" onclick="selectGenre('${genre}')"
-                        class="px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-                            active
-                            ? 'bg-cinema-gold text-zinc-950 font-bold shadow'
-                            : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
-                        }">
-                        ${genre}
-                    </button>
-                `;
-            }).join('');
-        }
+      if (!state.reviews[movieId]) state.reviews[movieId] = [];
+      state.reviews[movieId].unshift({ author, rating, comment, date: new Date().toLocaleDateString("pt-BR") });
+      saveState();
+      openDetails(movieId);
+      showToast("Avaliação registrada!");
+    }
 
-        function selectGenre(genre) {
-            state.selectedGenre = genre;
-            updateCatalogTabStyles();
-            renderGenreFilters();
-            renderCatalog();
-        }
+    /* Checkout Pix CPF 05850466622 + Liberação Instantânea */
+    function openCheckout(movieId) {
+      const m = state.movies.find(item => item.id === movieId);
+      if (!m) return;
+      state.currentCheckoutMovieId = m.id;
 
-        function resetFilters() {
-            state.selectedGenre = 'Todos';
-            state.catalogTab = 'all';
-            document.getElementById('search-input').value = '';
-            document.getElementById('sort-select').value = 'featured';
-            updateCatalogTabStyles();
-            renderGenreFilters();
-            renderCatalog();
-        }
+      const amount = Number(m.price || DEFAULT_PRICE);
+      const pixPayload = buildPixPayload(amount, m.id);
 
-        function renderCatalog() {
-            const grid = document.getElementById('movies-grid');
-            const emptyState = document.getElementById('empty-catalog');
-            const searchTerm = (document.getElementById('search-input').value || '').toLowerCase().trim();
-            const sortBy = document.getElementById('sort-select').value || 'featured';
+      document.getElementById("checkoutBody").innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+          <div>
+            <div style="font-size:0.8rem; color:var(--muted);">Filme selecionado</div>
+            <div style="font-size:1.1rem; font-weight:800;">${escapeHtml(m.title)}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:0.8rem; color:var(--muted);">Valor</div>
+            <div style="font-size:1.25rem; font-weight:800; color:var(--cyan);">${formatBRL(amount)}</div>
+          </div>
+        </div>
 
-            let list = state.movies.filter(movie => {
-                const matchesSearch = !searchTerm ||
-                    movie.title.toLowerCase().includes(searchTerm) ||
-                    movie.synopsis.toLowerCase().includes(searchTerm) ||
-                    movie.genre.toLowerCase().includes(searchTerm) ||
-                    String(movie.year).includes(searchTerm);
+        <div class="pix-box">
+          <div style="font-size:0.85rem; font-weight:700; color:var(--cyan); margin-bottom:4px;">
+            Pix CPF: ${PIX_KEY_FORMATTED} (${PIX_KEY_RAW})
+          </div>
+          <div style="font-size:0.78rem; color:var(--muted); margin-bottom:10px;">
+            Escaneie o QR Code ou copie o código Pix Copia e Cola e clique em liberar para abrir o vídeo na hora.
+          </div>
 
-                const matchesGenre = state.selectedGenre === 'Todos' || movie.genre === state.selectedGenre;
+          <canvas id="pixQrCanvas" width="184" height="184" style="border-radius:10px; background:#fff;"></canvas>
 
-                let matchesTab = true;
-                if (state.catalogTab === 'unlocked') matchesTab = state.unlockedIds.includes(movie.id);
-                if (state.catalogTab === 'favorites') matchesTab = state.favoriteIds.includes(movie.id);
+          <div class="pix-code-box" id="pixCopiaColaText">${escapeHtml(pixPayload)}</div>
 
-                return matchesSearch && matchesGenre && matchesTab;
-            });
+          <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:12px;">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="copyPixCode()">Copiar Pix Copia e Cola</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="copyRawPixKey()">Copiar Chave CPF ${PIX_KEY_RAW}</button>
+          </div>
 
-            if (sortBy === 'price-asc') {
-                list = [...list].sort((a, b) => Number(a.price) - Number(b.price));
-            } else if (sortBy === 'year-desc') {
-                list = [...list].sort((a, b) => Number(b.year) - Number(a.year));
-            } else if (sortBy === 'year-asc') {
-                list = [...list].sort((a, b) => Number(a.year) - Number(b.year));
-            } else if (sortBy === 'title-asc') {
-                list = [...list].sort((a, b) => a.title.localeCompare(b.title, 'pt-BR'));
-            } else {
-                list = [...list].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-            }
+          <button type="button" class="btn btn-green" style="width:100%; padding:12px;" onclick="confirmPixAndOpenPlayer('${m.id}')">
+            ✓ Já paguei o Pix • Abrir Vídeo Instantâneo
+          </button>
+        </div>
+      `;
 
-            document.getElementById('movies-showing-count').textContent = `Mostrando ${list.length} ${list.length === 1 ? 'filme' : 'filmes'}`;
+      document.getElementById("checkoutModal").classList.add("open");
+      const canvas = document.getElementById("pixQrCanvas");
+      if (canvas) drawQrMatrixOnCanvas(canvas, pixPayload);
+    }
 
-            if (list.length === 0) {
-                grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                lucide.createIcons();
-                return;
-            }
+    function copyPixCode() {
+      const code = document.getElementById("pixCopiaColaText")?.textContent || "";
+      navigator.clipboard?.writeText(code).then(
+        () => showToast("Código Pix Copia e Cola copiado!"),
+        () => showToast("Selecione e copie o código manualmente.")
+      );
+    }
 
-            emptyState.classList.add('hidden');
+    function copyRawPixKey() {
+      navigator.clipboard?.writeText(PIX_KEY_RAW).then(
+        () => showToast(`Chave Pix CPF ${PIX_KEY_RAW} copiada!`),
+        () => showToast(`Chave Pix CPF: ${PIX_KEY_RAW}`)
+      );
+    }
 
-            grid.innerHTML = list.map(movie => {
-                const isUnlocked = state.unlockedIds.includes(movie.id);
-                const isFav = state.favoriteIds.includes(movie.id);
-                const ratingInfo = getAverageRating(movie.id);
-                const prog = state.progress[movie.id];
-                const fallback = createCinemaPosterSVG(movie.title, movie.genre, '#18181b', '#09090b', '#e50914');
+    function confirmPixAndOpenPlayer(movieId) {
+      const m = state.movies.find(item => item.id === movieId);
+      if (!m) return;
 
-                return `
-                    <article class="movie-card-hover bg-cinema-900 border ${isUnlocked ? 'border-emerald-500/40' : 'border-zinc-800/90'} rounded-2xl overflow-hidden flex flex-col shadow-lg">
-                        <div class="relative aspect-[2/3] bg-zinc-950 overflow-hidden group">
-                            <img src="${movie.poster}" alt="${movie.title}" onerror="this.src='${fallback}'" onclick="openDetailsModal('${movie.id}')" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer">
-                            <div class="absolute inset-0 bg-gradient-to-t from-cinema-900 via-transparent to-black/45 pointer-events-none"></div>
+      const amount = Number(m.price || DEFAULT_PRICE);
+      if (!state.unlocked.includes(m.id)) {
+        state.unlocked.push(m.id);
+      }
+      state.sales.push({
+        id: `sale-${Date.now()}`,
+        movieId: m.id,
+        movieTitle: m.title,
+        amount,
+        pixKey: PIX_KEY_RAW,
+        date: new Date().toLocaleString("pt-BR")
+      });
+      if (!state.progress[m.id]) state.progress[m.id] = 5;
 
-                            <!-- Topo Esquerdo: Classificação + Ano -->
-                            <div class="absolute top-3 left-3 flex items-center gap-1.5">
-                                <span class="px-2 py-0.5 text-[11px] font-bold rounded bg-black/75 backdrop-blur-sm text-white border border-white/10">${movie.rating === 'L' ? 'L' : movie.rating + '+'}</span>
-                                <span class="px-2 py-0.5 text-[11px] font-medium rounded bg-black/75 backdrop-blur-sm text-zinc-300">${movie.year}</span>
-                            </div>
+      saveState();
+      closeModal("checkoutModal");
+      render();
+      showToast(`Pix confirmado! Abrindo "${m.title}"...`);
+      openPlayer(m.id);
+    }
 
-                            <!-- Topo Direito: Preço ou Liberado + Favorito -->
-                            <div class="absolute top-3 right-3 flex items-center gap-1.5">
-                                <button type="button" onclick="toggleFavorite('${movie.id}')" class="p-1.5 rounded-full bg-black/75 hover:bg-black text-white border border-white/10 transition" title="Lista de Desejos">
-                                    <i data-lucide="heart" class="w-3.5 h-3.5 ${isFav ? 'text-rose-400 fill-current' : 'text-zinc-300'}"></i>
-                                </button>
-                                ${isUnlocked ? `
-                                    <span class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500 text-zinc-950 text-xs font-extrabold shadow-lg">
-                                        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-                                        <span>Liberado</span>
-                                    </span>
-                                ` : `
-                                    <span class="px-2.5 py-1 rounded-full bg-zinc-950/90 border border-cinema-gold/50 text-cinema-gold text-xs font-extrabold shadow-lg">
-                                        ${formatBRL(movie.price)}
-                                    </span>
-                                `}
-                            </div>
+    /* Player Multi-formato */
+    function parseEmbedUrl(url) {
+      if (!url) return null;
+      const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+      if (ytMatch) {
+        return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`;
+      }
+      const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+      if (driveMatch) {
+        return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+      }
+      return null;
+    }
 
-                            <!-- Rodapé da Capa: Gênero, Avaliação e Duração -->
-                            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-zinc-300 pointer-events-none">
-                                <span class="font-semibold text-cinema-gold">${movie.genre}</span>
-                                <div class="flex items-center gap-2">
-                                    ${ratingInfo.count > 0 ? `<span class="text-amber-400 font-bold">★ ${ratingInfo.avg}</span>` : ''}
-                                    <span class="flex items-center gap-1 text-zinc-400">
-                                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                                        ${movie.duration}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
+    function openPlayer(movieId) {
+      const m = state.movies.find(item => item.id === movieId);
+      if (!m) return;
+      state.currentPlayerMovieId = m.id;
+      document.getElementById("playerTitle").textContent = `▶ ${m.title}`;
 
-                        <div class="p-4 flex-1 flex flex-col">
-                            <h3 onclick="openDetailsModal('${movie.id}')" class="text-base font-bold text-white line-clamp-1 cursor-pointer hover:text-cinema-gold transition" title="${movie.title}">${movie.title}</h3>
-                            <p class="text-xs text-zinc-400 mt-1 line-clamp-2 flex-1 leading-relaxed">${movie.synopsis}</p>
-                            ${prog && isUnlocked ? `<p class="text-[11px] text-sky-400 mt-2 font-medium">Continuar assistindo (${prog.label || 'em andamento'})</p>` : ''}
+      const embedUrl = parseEmbedUrl(m.videoUrl);
+      const isDirectVideo = m.videoUrl && !embedUrl && /\.(mp4|webm|ogg)(\?.*)?$/i.test(m.videoUrl) || (m.videoUrl && !embedUrl && m.videoUrl.startsWith("http"));
 
-                            <div class="mt-4 pt-3 border-t border-zinc-800/80 flex items-center gap-2">
-                                <button type="button" onclick="openDetailsModal('${movie.id}')" class="px-3 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition" title="Detalhes e Trailer">
-                                    Detalhes
-                                </button>
-                                ${isUnlocked ? `
-                                    <button type="button" onclick="openPlayerModal('${movie.id}')" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs sm:text-sm transition flex items-center justify-center gap-1.5 shadow-md">
-                                        <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-                                        <span>Assistir</span>
-                                    </button>
-                                ` : `
-                                    <button type="button" onclick="openCheckoutModal('${movie.id}')" class="flex-1 py-2.5 px-3 rounded-xl bg-cinema-red hover:bg-cinema-redHover text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-1.5 shadow-md shadow-cinema-red/20">
-                                        <i data-lucide="lock" class="w-4 h-4"></i>
-                                        <span>${formatBRL(movie.price)}</span>
-                                    </button>
-                                `}
-                            </div>
-                        </div>
-                    </article>
-                `;
-            }).join('');
+      let mediaHtml = "";
+      if (embedUrl) {
+        mediaHtml = `<iframe src="${escapeHtml(embedUrl)}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+      } else if (isDirectVideo) {
+        mediaHtml = `
+          <video id="mainVideoEl" controls autoplay playsinline src="${escapeHtml(m.videoUrl)}" ontimeupdate="trackVideoProgress('${m.id}', this)"></video>
+        `;
+      } else {
+        mediaHtml = `
+          <div class="demo-screen">
+            <div style="font-size:0.8rem; color:var(--cyan); font-weight:700; margin-bottom:6px;">EXIBIÇÃO LIBERADA VIA PIX CPF ${PIX_KEY_FORMATTED}</div>
+            <h2 style="font-size:1.5rem; margin-bottom:8px;">${escapeHtml(m.title)}</h2>
+            <p style="color:var(--muted); max-width:460px; font-size:0.9rem;">
+              Este filme está desbloqueado para você. Para reproduzir um vídeo externo específico, cole o link do YouTube, Google Drive ou .mp4 no campo de URL do filme no Painel Admin.
+            </p>
+          </div>
+        `;
+      }
 
-            lucide.createIcons();
-        }
+      const whatsappText = encodeURIComponent(
+        `Olá! Confirmei o pagamento Pix (CPF ${PIX_KEY_FORMATTED}) de ${formatBRL(m.price || DEFAULT_PRICE)} e liberei o filme "${m.title}" no CinePay.`
+      );
 
-        // ==========================================
-        // MODAL DE DETALHES, TRAILER & AVALIAÇÕES
-        // ==========================================
-        function openDetailsModal(movieId) {
-            const movie = state.movies.find(m => m.id === movieId);
-            if (!movie) return;
+      document.getElementById("playerBody").innerHTML = `
+        <div class="player-frame">${mediaHtml}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+            <span style="font-size:0.8rem; color:var(--muted);">Velocidade:</span>
+            ${[0.75, 1, 1.25, 1.5, 2].map(spd => `<button class="btn btn-ghost btn-sm" onclick="setVideoSpeed(${spd})">${spd}x</button>`).join("")}
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm" onclick="markWatched('${m.id}')">Marcar como concluído</button>
+            <a class="btn btn-green btn-sm" style="text-decoration:none;" target="_blank" rel="noopener" href="https://wa.me/?text=${whatsappText}">
+              Enviar comprovante no WhatsApp
+            </a>
+          </div>
+        </div>
+      `;
 
-            state.detailsMovieId = movieId;
-            state.selectedReviewRating = 5;
+      document.getElementById("playerModal").classList.add("open");
+    }
 
-            const isUnlocked = state.unlockedIds.includes(movie.id);
-            const ratingInfo = getAverageRating(movie.id);
+    function setVideoSpeed(speed) {
+      const vid = document.getElementById("mainVideoEl");
+      if (vid) {
+        vid.playbackRate = speed;
+        showToast(`Velocidade: ${speed}x`);
+      } else {
+        showToast(`Velocidade selecionada: ${speed}x`);
+      }
+    }
 
-            document.getElementById('details-poster').src = movie.poster;
-            document.getElementById('details-genre').textContent = movie.genre;
-            document.getElementById('details-year').textContent = movie.year;
-            document.getElementById('details-duration').textContent = movie.duration;
-            document.getElementById('details-rating-badge').textContent = movie.rating === 'L' ? 'Livre' : movie.rating + ' anos';
-            document.getElementById('details-title').textContent = movie.title;
-            document.getElementById('details-synopsis').textContent = movie.synopsis;
+    function trackVideoProgress(movieId, vid) {
+      if (!vid.duration) return;
+      const pct = Math.round((vid.currentTime / vid.duration) * 100);
+      if (pct > (state.progress[movieId] || 0)) {
+        state.progress[movieId] = pct;
+        saveState();
+      }
+    }
 
-            document.getElementById('details-stars-summary').innerHTM
+    function markWatched(movieId) {
+      state.progress[movieId] = 100;
+      saveState();
+      render();
+      showToast("Filme marcado como concluído!");
+    }
+
+    function closePlayer() {
+      const vid = document.getElementById("mainVideoEl");
+      if (vid) vid.pause();
+      document.getElementById("playerBody").innerHTML = "";
+      closeModal("playerModal");
+      render();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id)?.classList.remove("open");
+    }
+
+    function syncNetStatus() {
+      const badge = document.getElementById("netStatus");
+      if (!badge) return;
+      if (navigator.onLine) {
+        badge.textContent = "Online";
+        badge.classList.remove("offline");
+      } else {
+        badge.textContent = "Offline";
+        badge.classList.add("offline");
+      }
+    }
+
+    window.addEventListener("online", syncNetStatus);
+    window.addEventListener("offline", syncNetStatus);
+
+    loadState();
+    syncNetStatus();
+    render();
+  </script>
+</body>
+</html>
+
