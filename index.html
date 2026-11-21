@@ -1,13 +1,14 @@
+
 ```html
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CinePay - Locadora Digital & Streaming</title>
+    <title>CinePay - Locadora Digital & Streaming (R$ 1,00 por filme)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Cinzel (para toque cinematográfico) -->
+    <!-- Google Fonts: Inter & Cinzel -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -39,7 +40,7 @@
         }
     </script>
     <style>
-        /* Custom Scrollbar */
+        /* Barra de rolagem personalizada */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -59,16 +60,16 @@
         }
         .movie-card-hover:hover {
             transform: translateY(-6px);
-            box-shadow: 0 20px 25px -5px rgba(229, 9, 20, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 25px -5px rgba(229, 9, 20, 0.18), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
         }
         .glass-nav {
-            background: rgba(9, 9, 11, 0.85);
+            background: rgba(9, 9, 11, 0.88);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
         @keyframes pulse-glow {
             0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
-            50% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.6); }
+            50% { box-shadow: 0 0 26px rgba(245, 158, 11, 0.65); }
         }
         .gold-glow {
             animation: pulse-glow 3s infinite;
@@ -77,34 +78,34 @@
 </head>
 <body class="bg-cinema-950 text-zinc-100 font-sans antialiased min-h-screen flex flex-col selection:bg-cinema-red selection:text-white">
 
-    <!-- Toast Notification Container (Substitui alert()) -->
+    <!-- Container de Notificações Toast (Sem alert/confirm) -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
-    <!-- Navbar Superior -->
+    <!-- Cabeçalho / Navbar Superior -->
     <header class="sticky top-0 z-40 glass-nav border-b border-zinc-800/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 sm:h-20">
-                <!-- Logo -->
+                <!-- Marca / Logo -->
                 <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('client')">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cinema-red to-amber-600 flex items-center justify-center shadow-lg shadow-cinema-red/20">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cinema-red to-amber-600 flex items-center justify-center shadow-lg shadow-cinema-red/25">
                         <i data-lucide="film" class="w-6 h-6 text-white"></i>
                     </div>
                     <div>
                         <span class="font-cinema text-xl sm:text-2xl font-black tracking-wider bg-gradient-to-r from-white via-zinc-200 to-cinema-gold bg-clip-text text-transparent">CINEPAY</span>
-                        <span class="hidden sm:block text-[10px] uppercase tracking-[0.2em] text-zinc-400 -mt-1">Locadora Digital</span>
+                        <span class="hidden sm:block text-[10px] uppercase tracking-[0.2em] text-zinc-400 -mt-1">Filmes por R$ 1,00</span>
                     </div>
                 </div>
 
                 <!-- Controles de Navegação -->
                 <div class="flex items-center gap-2 sm:gap-4">
-                    <!-- Badge de Filmes Desbloqueados -->
-                    <button onclick="filterOnlyUnlocked()" id="btn-my-movies" class="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-sm font-medium text-zinc-300 transition">
-                        <i data-lucide="unlock" class="w-4 h-4 text-cinema-gold"></i>
-                        <span>Meus Filmes</span>
-                        <span id="unlocked-count-badge" class="px-2 py-0.5 text-xs font-bold rounded-full bg-cinema-gold/20 text-cinema-gold">0</span>
+                    <!-- Badge Meus Filmes Desbloqueados -->
+                    <button onclick="filterOnlyUnlocked()" id="btn-my-movies" class="flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs sm:text-sm font-medium text-zinc-300 transition">
+                        <i data-lucide="unlock" class="w-4 h-4 text-emerald-400"></i>
+                        <span class="hidden sm:inline">Meus Filmes</span>
+                        <span id="unlocked-count-badge" class="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-400">0</span>
                     </button>
 
-                    <!-- Alternador Cliente / Admin -->
+                    <!-- Seletor Catálogo / Admin -->
                     <div class="flex items-center bg-zinc-900 p-1 rounded-xl border border-zinc-800">
                         <button id="tab-client" onclick="switchView('client')" class="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition bg-cinema-red text-white shadow">
                             <i data-lucide="clapperboard" class="w-4 h-4"></i>
@@ -126,7 +127,7 @@
     <main id="view-client" class="flex-1">
         <!-- Hero Banner em Destaque -->
         <section id="hero-section" class="relative overflow-hidden border-b border-zinc-800/60 bg-cinema-900">
-            <!-- Preenchido dinamicamente pelo JS -->
+            <!-- Preenchido via JS -->
         </section>
 
         <!-- Barra de Busca e Filtros -->
@@ -139,24 +140,24 @@
                         class="w-full pl-11 pr-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-cinema-gold transition">
                 </div>
 
-                <!-- Filtro de Gênero -->
+                <!-- Botões de Filtro de Gênero -->
                 <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0" id="genre-filters">
-                    <!-- Botões de gênero gerados via JS -->
+                    <!-- Gerado via JS -->
                 </div>
             </div>
 
-            <!-- Status / Contador -->
+            <!-- Título e Contador -->
             <div class="flex items-center justify-between mt-6 mb-4">
                 <div class="flex items-center gap-2">
                     <span class="w-1.5 h-6 bg-cinema-red rounded-full"></span>
-                    <h2 id="catalog-heading" class="text-lg sm:text-xl font-bold text-white">Catálogo Disponível</h2>
+                    <h2 id="catalog-heading" class="text-lg sm:text-xl font-bold text-white">Catálogo Disponível • R$ 1,00</h2>
                 </div>
                 <span id="movies-showing-count" class="text-xs sm:text-sm text-zinc-400">Mostrando 0 filmes</span>
             </div>
 
-            <!-- Grid de Filmes -->
+            <!-- Grade de Filmes -->
             <div id="movies-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-16">
-                <!-- Cards de filmes inseridos via JS -->
+                <!-- Cards inseridos via JS -->
             </div>
 
             <!-- Estado Vazio -->
@@ -180,9 +181,13 @@
                     <span class="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-cinema-gold/20 text-cinema-gold rounded-md border border-cinema-gold/30">Área Restrita</span>
                     <h1 class="text-2xl sm:text-3xl font-bold text-white">Painel Administrativo</h1>
                 </div>
-                <p class="text-sm text-zinc-400 mt-1">Cadastre filmes, defina valores (padrão R$ 5,00) e acompanhe suas vendas em tempo real.</p>
+                <p class="text-sm text-zinc-400 mt-1">Gerencie seus filmes (R$ 1,00), configure sua chave Pix CPF e acompanhe o faturamento.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
+                <button onclick="applyOneRealToAllMovies()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-700/50 text-xs sm:text-sm font-semibold text-emerald-300 transition" title="Define R$ 1,00 em todos os filmes cadastrados">
+                    <i data-lucide="badge-dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Aplicar R$ 1,00 em Todos</span>
+                </button>
                 <button onclick="exportBackupJSON()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs sm:text-sm font-medium text-zinc-200 transition">
                     <i data-lucide="download" class="w-4 h-4 text-cinema-gold"></i>
                     <span>Exportar JSON</span>
@@ -190,11 +195,38 @@
                 <label class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs sm:text-sm font-medium text-zinc-200 transition cursor-pointer">
                     <i data-lucide="upload" class="w-4 h-4 text-emerald-400"></i>
                     <span>Importar JSON</span>
-                    <input type="file" id="import-json-input" accept=".json" onchange="importBackupJSON(event)" class="hidden">
+                    <input type="file" id="import-json-input" accept=".json,application/json" onchange="handleImportFileSelect(event)" class="hidden">
                 </label>
                 <button onclick="logoutAdmin()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-950/50 hover:bg-red-900/50 border border-red-800/50 text-xs sm:text-sm font-medium text-red-300 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                     <span>Sair</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Configurações Pix CPF e Segurança -->
+        <div class="bg-cinema-900 border border-zinc-800 rounded-2xl p-5 my-6 shadow-lg">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-cinema-gold mb-1.5">Chave Pix CPF Recebedor</label>
+                        <input type="text" id="setting-pix-key" value="05850466622" placeholder="05850466622"
+                            class="w-full px-3.5 py-2.5 bg-zinc-950 border border-cinema-gold/40 rounded-xl text-sm font-mono font-bold text-white focus:outline-none focus:border-cinema-gold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Nome do Recebedor Pix</label>
+                        <input type="text" id="setting-pix-name" value="CINEPAY LOCADORA" placeholder="CINEPAY LOCADORA" maxlength="25"
+                            class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Senha do Painel Admin</label>
+                        <input type="text" id="setting-admin-pass" value="1234" placeholder="1234"
+                            class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm font-mono text-white focus:outline-none focus:border-cinema-gold">
+                    </div>
+                </div>
+                <button type="button" onclick="saveAdminSettings()" class="px-5 py-2.5 bg-cinema-gold hover:bg-amber-400 text-zinc-950 font-bold text-sm rounded-xl transition flex items-center justify-center gap-2 shrink-0">
+                    <i data-lucide="check" class="w-4 h-4"></i>
+                    <span>Salvar Configurações</span>
                 </button>
             </div>
         </div>
@@ -231,7 +263,7 @@
                     </div>
                 </div>
                 <p id="stat-movies" class="text-2xl sm:text-3xl font-extrabold text-white mt-2">0</p>
-                <span class="text-xs text-zinc-500 mt-1 block">Títulos ativos na plataforma</span>
+                <span class="text-xs text-zinc-500 mt-1 block">Títulos ativos na vitrine</span>
             </div>
 
             <div class="bg-cinema-900 border border-zinc-800 p-5 rounded-2xl shadow-lg">
@@ -241,7 +273,7 @@
                         <i data-lucide="trending-up" class="w-5 h-5"></i>
                     </div>
                 </div>
-                <p id="stat-ticket" class="text-2xl sm:text-3xl font-extrabold text-white mt-2">R$ 5,00</p>
+                <p id="stat-ticket" class="text-2xl sm:text-3xl font-extrabold text-white mt-2">R$ 1,00</p>
                 <span class="text-xs text-zinc-500 mt-1 block">Preço padrão por filme</span>
             </div>
         </div>
@@ -285,7 +317,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Ano *</label>
-                                <input type="number" id="movie-year" required min="1900" max="2030" value="2025"
+                                <input type="number" id="movie-year" required min="1900" max="2035" value="2026"
                                     class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold">
                             </div>
                         </div>
@@ -310,7 +342,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold uppercase tracking-wider text-cinema-gold mb-1.5">Preço (R$) *</label>
-                                <input type="number" id="movie-price" required step="0.01" min="0" value="5.00"
+                                <input type="number" id="movie-price" required step="0.01" min="0" value="1.00"
                                     class="w-full px-3.5 py-2.5 bg-zinc-950 border border-cinema-gold/50 rounded-xl text-sm font-bold text-cinema-gold focus:outline-none focus:border-cinema-gold">
                             </div>
                         </div>
@@ -321,7 +353,7 @@
                                 class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold"></textarea>
                         </div>
 
-                        <!-- Capa do Filme (URL ou Upload Local Base64) -->
+                        <!-- Capa do Filme (URL ou Upload Local Otimizado) -->
                         <div class="p-3.5 bg-zinc-950/70 rounded-xl border border-zinc-800 space-y-2.5">
                             <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400">Capa / Pôster do Filme</label>
                             <input type="text" id="movie-poster" placeholder="Cole a URL da imagem (ou envie arquivo abaixo)"
@@ -343,10 +375,10 @@
 
                         <!-- URL do Vídeo -->
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Link do Filme / Trailer (YouTube ou MP4)</label>
-                            <input type="url" id="movie-video" placeholder="Ex: https://www.youtube.com/watch?v=... ou .mp4"
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Link do Vídeo (YouTube, Google Drive, Vimeo ou MP4)</label>
+                            <input type="url" id="movie-video" placeholder="Ex: https://youtu.be/... ou link .mp4"
                                 class="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-cinema-gold">
-                            <p class="text-[11px] text-zinc-500 mt-1">Se deixar em branco, o player exibirá uma reprodução cinematográfica de demonstração.</p>
+                            <p class="text-[11px] text-zinc-500 mt-1">Aceita YouTube (watch, shorts, youtu.be), Google Drive, Vimeo ou link direto MP4/WebM.</p>
                         </div>
 
                         <div class="flex items-center gap-2 pt-1">
@@ -356,7 +388,7 @@
 
                         <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-cinema-red to-red-700 hover:from-red-600 hover:to-red-800 text-white font-bold rounded-xl shadow-lg shadow-cinema-red/20 transition flex items-center justify-center gap-2">
                             <i data-lucide="save" class="w-4 h-4"></i>
-                            <span id="btn-submit-text">Salvar Filme no Catálogo</span>
+                            <span id="btn-submit-text">Salvar Filme por R$ 1,00</span>
                         </button>
                     </form>
                 </div>
@@ -384,14 +416,17 @@
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                         <h2 class="text-lg font-bold text-white flex items-center gap-2">
                             <i data-lucide="receipt" class="w-5 h-5 text-emerald-400"></i>
-                            <span>Histórico de Vendas (R$ 5,00 / filme)</span>
+                            <span>Histórico de Vendas (R$ 1,00 / filme)</span>
                         </h2>
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             <button onclick="exportCSVReport()" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-medium transition">
-                                Exportar Relatório CSV
+                                Exportar CSV
+                            </button>
+                            <button onclick="openClearSalesModal()" class="text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 font-medium transition">
+                                Limpar Histórico
                             </button>
                             <button onclick="openResetConfirmModal()" class="text-xs px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-red-950 text-zinc-400 hover:text-red-300 border border-zinc-700 transition">
-                                Resetar Dados
+                                Resetar Padrão
                             </button>
                         </div>
                     </div>
@@ -412,7 +447,7 @@
                         </table>
                     </div>
                     <div id="empty-sales" class="text-center py-8 text-zinc-500 text-sm">
-                        Nenhuma venda registrada ainda. Quando um cliente desbloquear um filme por R$ 5,00, ela aparecerá aqui.
+                        Nenhuma venda registrada ainda. Quando um cliente desbloquear um filme por R$ 1,00, ela aparecerá aqui.
                     </div>
                 </div>
             </div>
@@ -420,15 +455,15 @@
     </main>
 
     <!-- ========================================== -->
-    <!-- MODAL 1: CHECKOUT / PAGAMENTO (R$ 5,00)    -->
+    <!-- MODAL 1: CHECKOUT / PAGAMENTO PIX R$ 1,00  -->
     <!-- ========================================== -->
-    <div id="checkout-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-cinema-900 border border-zinc-800 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl animate-fade-in">
+    <div id="checkout-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-cinema-900 border border-zinc-800 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl my-auto">
             <!-- Cabeçalho Modal -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-950/60">
                 <div class="flex items-center gap-2">
                     <i data-lucide="lock-open" class="w-5 h-5 text-cinema-gold"></i>
-                    <h3 class="font-bold text-white">Desbloquear Filme</h3>
+                    <h3 class="font-bold text-white">Desbloquear Filme Agora</h3>
                 </div>
                 <button onclick="closeCheckoutModal()" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
@@ -436,25 +471,25 @@
             </div>
 
             <!-- Resumo do Filme -->
-            <div class="p-6">
-                <div class="flex gap-4 p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800/80 mb-5">
+            <div class="p-5 sm:p-6">
+                <div class="flex gap-4 p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800/80 mb-4">
                     <img id="checkout-poster" src="" alt="Capa" class="w-16 h-24 rounded-xl object-cover bg-zinc-800 shrink-0">
                     <div class="flex-1 min-w-0">
                         <span id="checkout-genre" class="text-[11px] font-semibold uppercase tracking-wider text-cinema-gold">Gênero</span>
                         <h4 id="checkout-title" class="text-base font-bold text-white truncate">Título do Filme</h4>
-                        <p id="checkout-meta" class="text-xs text-zinc-400 mt-0.5">2025 • 2h 10m</p>
+                        <p id="checkout-meta" class="text-xs text-zinc-400 mt-0.5">2026 • 2h 10m</p>
                         <div class="mt-2 flex items-baseline gap-1.5">
                             <span class="text-xs text-zinc-400">Valor único:</span>
-                            <span id="checkout-price" class="text-lg font-extrabold text-emerald-400">R$ 5,00</span>
+                            <span id="checkout-price" class="text-lg font-extrabold text-emerald-400">R$ 1,00</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Abas Método de Pagamento -->
-                <div class="grid grid-cols-2 gap-2 p-1 bg-zinc-950 rounded-xl border border-zinc-800 mb-5">
+                <div class="grid grid-cols-2 gap-2 p-1 bg-zinc-950 rounded-xl border border-zinc-800 mb-4">
                     <button type="button" id="pay-tab-pix" onclick="switchPaymentMethod('pix')" class="flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold bg-emerald-600 text-white shadow transition">
                         <i data-lucide="qr-code" class="w-4 h-4"></i>
-                        <span>Pix Instantâneo</span>
+                        <span>Pix CPF Instantâneo</span>
                     </button>
                     <button type="button" id="pay-tab-card" onclick="switchPaymentMethod('card')" class="flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold text-zinc-400 hover:text-white transition">
                         <i data-lucide="credit-card" class="w-4 h-4"></i>
@@ -462,23 +497,42 @@
                     </button>
                 </div>
 
-                <!-- Conteúdo PIX -->
-                <div id="payment-pix-content" class="space-y-4">
-                    <div class="flex flex-col items-center justify-center p-4 bg-white rounded-2xl w-44 h-44 mx-auto shadow-inner">
-                        <!-- QR Code SVG Ilustrativo de Alta Nitidez -->
-                        <svg viewBox="0 0 100 100" class="w-full h-full text-zinc-950">
-                            <rect width="100" height="100" fill="#ffffff"/>
-                            <path fill="currentColor" d="M10,10 h25 v25 h-25 z M15,15 v15 h15 v-15 z M19,19 h7 v7 h-7 z M65,10 h25 v25 h-25 z M70,15 v15 h15 v-15 z M74,19 h7 v7 h-7 z M10,65 h25 v25 h-25 z M15,70 v15 h15 v-15 z M19,74 h7 v7 h-7 z M42,12 h6 v6 h-6 z M52,12 h6 v12 h-6 z M42,24 h6 v12 h-6 z M12,42 h12 v6 h-12 z M30,42 h12 v6 h-12 z M48,42 h12 v12 h-12 z M66,42 h8 v6 h-8 z M80,42 h10 v12 h-10 z M12,54 h6 v6 h-6 z M24,54 h18 v6 h-18 z M66,54 h12 v6 h-12 z M42,66 h12 v6 h-12 z M60,66 h6 v12 h-6 z M72,66 h18 v6 h-18 z M42,78 h6 v12 h-6 z M54,84 h18 v6 h-18 z M78,78 h12 v12 h-12 z"/>
-                        </svg>
-                    </div>
-                    <p class="text-center text-xs text-zinc-400">Escaneie o QR Code no app do seu banco ou copie o código Pix abaixo:</p>
-                    <div class="flex items-center gap-2">
-                        <input type="text" id="pix-copy-code" readonly value="00020126580014br.gov.bcb.pix0136cinepay-locadora-digital-5reais52040000530398654045.005802BR5915CINEPAY STREAM6009SAO PAULO62070503***6304E2B1"
-                            class="flex-1 px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-zinc-400 font-mono truncate">
-                        <button type="button" onclick="copyPixCode()" class="px-3.5 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shrink-0">
-                            <i data-lucide="copy" class="w-3.5 h-3.5 text-cinema-gold"></i>
-                            <span>Copiar</span>
+                <!-- Conteúdo PIX CPF -->
+                <div id="payment-pix-content" class="space-y-3.5">
+                    <!-- Destaque Chave Pix CPF -->
+                    <div class="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                        <div>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 block">Chave Pix (CPF Oficial)</span>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span id="display-pix-cpf-formatted" class="text-base sm:text-lg font-extrabold font-mono text-white">058.504.666-22</span>
+                                <span class="text-xs text-zinc-400 font-mono">(<span id="display-pix-cpf-raw">05850466622</span>)</span>
+                            </div>
+                        </div>
+                        <button type="button" onclick="copyPixCpfKey()" id="btn-copy-cpf" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shrink-0 shadow">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>Copiar Chave CPF</span>
                         </button>
+                    </div>
+
+                    <!-- QR Code Canvas Nítido -->
+                    <div class="flex flex-col items-center">
+                        <div class="p-3 bg-white rounded-2xl shadow-inner border-2 border-emerald-500/30">
+                            <canvas id="pix-qr-canvas" width="148" height="148" class="block"></canvas>
+                        </div>
+                        <p class="text-center text-xs text-zinc-400 mt-2">Escaneie o QR Code de <strong class="text-emerald-400" id="qr-price-hint">R$ 1,00</strong> ou use o <strong class="text-zinc-200">Pix Copia e Cola</strong>:</p>
+                    </div>
+
+                    <!-- Código Pix Copia e Cola EMV -->
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-1">Código Pix Copia e Cola (BR Code)</label>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="pix-copy-code" readonly value=""
+                                class="flex-1 px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-zinc-300 font-mono truncate">
+                            <button type="button" onclick="copyPixCode()" id="btn-copy-brcode" class="px-3.5 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shrink-0 border border-zinc-700">
+                                <i data-lucide="clipboard-copy" class="w-3.5 h-3.5 text-cinema-gold"></i>
+                                <span>Copiar Código Pix</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -508,17 +562,17 @@
                     </div>
                 </div>
 
-                <!-- Botão Confirmar Pagamento -->
-                <button type="button" onclick="confirmPayment()" id="btn-confirm-pay" class="w-full mt-6 py-3.5 px-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-zinc-950 font-extrabold rounded-xl shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2 text-sm sm:text-base">
-                    <i data-lucide="check-circle-2" class="w-5 h-5"></i>
-                    <span id="confirm-pay-label">Confirmar Pagamento de R$ 5,00</span>
+                <!-- Botão Confirmar Pagamento / Liberar Vídeo Instantâneo -->
+                <button type="button" onclick="confirmPayment()" id="btn-confirm-pay" class="w-full mt-5 py-3.5 px-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-zinc-950 font-extrabold rounded-xl shadow-lg shadow-emerald-500/25 transition flex items-center justify-center gap-2 text-sm sm:text-base">
+                    <i data-lucide="play-circle" class="w-5 h-5"></i>
+                    <span id="confirm-pay-label">Já realizei o Pix (R$ 1,00) • Liberar Vídeo Agora</span>
                 </button>
             </div>
         </div>
     </div>
 
     <!-- ========================================== -->
-    <!-- MODAL 2: PLAYER DE VÍDEO INTEGRADO         -->
+    <!-- MODAL 2: PLAYER DE VÍDEO MULTI-FORMATO     -->
     <!-- ========================================== -->
     <div id="player-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-2 sm:p-6 bg-black/95 backdrop-blur-md">
         <div class="bg-cinema-900 border border-zinc-800 rounded-2xl sm:rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl flex flex-col">
@@ -535,7 +589,7 @@
 
             <!-- Área do Vídeo -->
             <div id="player-screen-container" class="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden">
-                <!-- Conteúdo injetado dinamicamente (YouTube iframe, <video> MP4 ou Simulação Cinema) -->
+                <!-- Conteúdo injetado dinamicamente -->
             </div>
 
             <!-- Detalhes abaixo do player -->
@@ -544,7 +598,7 @@
                     <div class="flex items-center gap-2 text-xs text-zinc-400 mb-1">
                         <span id="player-genre" class="text-cinema-gold font-semibold">Gênero</span>
                         <span>•</span>
-                        <span id="player-year">2025</span>
+                        <span id="player-year">2026</span>
                         <span>•</span>
                         <span id="player-duration">2h 00m</span>
                     </div>
@@ -568,7 +622,7 @@
             <h3 class="text-lg font-bold text-white text-center">Acesso Administrativo</h3>
             <p class="text-xs text-zinc-400 text-center mt-1">Digite a senha para gerenciar os filmes e visualizar o faturamento.</p>
             <div class="mt-3 px-3 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-center">
-                <span class="text-[11px] text-zinc-400">Senha padrão para teste: <strong class="text-cinema-gold font-mono">1234</strong></span>
+                <span class="text-[11px] text-zinc-400">Senha padrão: <strong class="text-cinema-gold font-mono">1234</strong></span>
             </div>
 
             <form onsubmit="verifyAdminPassword(event)" class="mt-4 space-y-4">
@@ -583,12 +637,57 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- MODAL 4: CONFIRMAÇÃO DE RESET DE DADOS     -->
+    <!-- MODAL 4: OPÇÕES DE IMPORTAÇÃO JSON         -->
+    <!-- ========================================== -->
+    <div id="import-options-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-cinema-900 border border-zinc-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                    <i data-lucide="file-json" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">Importar Arquivo JSON</h3>
+                    <p id="import-summary-text" class="text-xs text-zinc-400">0 filmes detectados no arquivo.</p>
+                </div>
+            </div>
+            <p class="text-xs text-zinc-300 leading-relaxed mt-2">
+                Como você deseja aplicar os filmes importados ao catálogo atual?
+            </p>
+            <div class="flex flex-col sm:flex-row gap-2.5 mt-5">
+                <button onclick="executeJsonImport('replace')" class="flex-1 py-2.5 px-3 bg-cinema-red hover:bg-red-700 text-white text-xs sm:text-sm font-bold rounded-xl transition">
+                    Substituir Catálogo
+                </button>
+                <button onclick="executeJsonImport('merge')" class="flex-1 py-2.5 px-3 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs sm:text-sm font-bold rounded-xl transition">
+                    Mesclar (Adicionar)
+                </button>
+            </div>
+            <button onclick="closeImportOptionsModal()" class="w-full mt-2 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium rounded-xl transition">
+                Cancelar Importação
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 5: LIMPAR HISTÓRICO DE VENDAS        -->
+    <!-- ========================================== -->
+    <div id="clear-sales-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-cinema-900 border border-zinc-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
+            <h3 class="text-lg font-bold text-white">Limpar Histórico de Vendas?</h3>
+            <p class="text-xs text-zinc-400 mt-2">Isso zerará o contador de vendas e o faturamento acumulado no painel, mantendo seus filmes cadastrados intactos.</p>
+            <div class="flex gap-2 mt-5">
+                <button onclick="closeClearSalesModal()" class="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium rounded-xl transition">Cancelar</button>
+                <button onclick="executeClearSales()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 text-sm font-bold rounded-xl transition">Limpar Vendas</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 6: CONFIRMAÇÃO DE RESET DE DADOS     -->
     <!-- ========================================== -->
     <div id="reset-confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="bg-cinema-900 border border-zinc-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
-            <h3 class="text-lg font-bold text-white">Restaurar Dados de Fábrica?</h3>
-            <p class="text-xs text-zinc-400 mt-2">Isso apagará o histórico de vendas, filmes desbloqueados e restaurará os filmes de exemplo originais.</p>
+            <h3 class="text-lg font-bold text-white">Restaurar Filmes Padrão?</h3>
+            <p class="text-xs text-zinc-400 mt-2">Isso restaurará o catálogo inicial com todos os filmes configurados a <strong class="text-emerald-400">R$ 1,00</strong> e a chave Pix CPF <strong class="text-cinema-gold">058.504.666-22</strong>.</p>
             <div class="flex gap-2 mt-5">
                 <button onclick="closeResetConfirmModal()" class="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium rounded-xl transition">Cancelar</button>
                 <button onclick="executeFactoryReset()" class="flex-1 py-2.5 bg-cinema-red hover:bg-red-700 text-white text-sm font-bold rounded-xl transition">Sim, Restaurar</button>
@@ -601,133 +700,145 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
             <div class="flex items-center gap-2">
                 <span class="font-cinema font-bold text-zinc-300">CINEPAY</span>
-                <span>• Plataforma de Filmes Pay-Per-View (R$ 5,00 por título)</span>
+                <span>• Locadora Digital Pay-Per-View (R$ 1,00 por filme • Pix CPF 058.504.666-22)</span>
             </div>
             <p>Dados salvos localmente no navegador com suporte a backup JSON.</p>
         </div>
     </footer>
 
     <!-- ========================================== -->
-    <!-- LÓGICA DA APLICAÇÃO (JAVASCRIPT)           -->
+    <!-- LÓGICA COMPLETA DA APLICAÇÃO (JAVASCRIPT)  -->
     <!-- ========================================== -->
     <script>
         // Chaves de armazenamento no localStorage
         const STORAGE_KEYS = {
-            MOVIES: 'cinepay_movies_v1',
-            UNLOCKED: 'cinepay_unlocked_v1',
-            SALES: 'cinepay_sales_v1',
-            ADMIN_AUTH: 'cinepay_admin_session_v1'
+            MOVIES: 'cinepay_movies_v3',
+            UNLOCKED: 'cinepay_unlocked_v3',
+            SALES: 'cinepay_sales_v3',
+            SETTINGS: 'cinepay_settings_v3',
+            ADMIN_AUTH: 'cinepay_admin_session_v3'
         };
 
-        // Gera capas SVG cinematográficas embutidas (sem depender de URLs externas que podem falhar)
-        function createCinemaPosterSVG(title, subtitle, color1, color2, accent) {
-            const safeTitle = title.replace(/[<>&"']/g, '');
-            const safeSub = subtitle.replace(/[<>&"']/g, '');
-            const svg = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+        // Configurações padrão com Chave Pix CPF Oficial 05850466622
+        const DEFAULT_SETTINGS = {
+            pixKey: '05850466622',
+            pixReceiverName: 'CINEPAY LOCADORA',
+            adminPassword: '1234'
+        };
+
+        // Gerador de Pôster Cinematográfico SVG embutido (zero dependências externas quebradas)
+        function createCinemaPosterSVG(title, genre, bgTop, bgBottom, accentColor) {
+            const safeTitle = String(title || 'Filme').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const safeGenre = String(genre || 'Cinema').toUpperCase().replace(/&/g, '&amp;').replace(/</g, '&lt;');
+            const words = safeTitle.split(' ');
+            let line1 = safeTitle;
+            let line2 = '';
+            if (words.length > 2) {
+                const mid = Math.ceil(words.length / 2);
+                line1 = words.slice(0, mid).join(' ');
+                line2 = words.slice(mid).join(' ');
+            }
+
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
                 <defs>
-                    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="${color1}"/>
-                        <stop offset="100%" stop-color="${color2}"/>
+                    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="${bgTop}"/>
+                        <stop offset="100%" stop-color="${bgBottom}"/>
                     </linearGradient>
-                    <radialGradient id="glow" cx="50%" cy="35%" r="50%">
-                        <stop offset="0%" stop-color="${accent}" stop-opacity="0.45"/>
-                        <stop offset="100%" stop-color="${color2}" stop-opacity="0"/>
-                    </radialGradient>
                 </defs>
-                <rect width="400" height="600" fill="url(#bg)"/>
-                <rect width="400" height="600" fill="url(#glow)"/>
-                <circle cx="200" cy="210" r="85" fill="none" stroke="${accent}" stroke-width="2" stroke-opacity="0.5"/>
-                <circle cx="200" cy="210" r="65" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.2"/>
-                <polygon points="188,185 188,235 228,210" fill="${accent}" fill-opacity="0.85"/>
-                <rect x="30" y="30" width="340" height="540" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1.5" rx="12"/>
-                <text x="200" y="380" font-family="sans-serif" font-size="13" font-weight="700" fill="${accent}" text-anchor="middle" letter-spacing="4">${safeSub.toUpperCase()}</text>
-                <text x="200" y="425" font-family="serif" font-size="26" font-weight="900" fill="#ffffff" text-anchor="middle">${safeTitle.slice(0, 22)}</text>
-                ${safeTitle.length > 22 ? `<text x="200" y="458" font-family="serif" font-size="24" font-weight="900" fill="#ffffff" text-anchor="middle">${safeTitle.slice(22, 44)}</text>` : ''}
-                <text x="200" y="540" font-family="sans-serif" font-size="11" fill="#a1a1aa" text-anchor="middle" letter-spacing="3">EXCLUSIVO CINEPAY</text>
+                <rect width="400" height="600" fill="url(#g)"/>
+                <circle cx="200" cy="210" r="115" fill="${accentColor}" fill-opacity="0.14"/>
+                <circle cx="200" cy="210" r="72" fill="none" stroke="${accentColor}" stroke-width="2" stroke-opacity="0.45"/>
+                <polygon points="186,184 228,210 186,236" fill="${accentColor}" fill-opacity="0.9"/>
+                <rect x="28" y="28" width="344" height="544" rx="18" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
+                <text x="200" y="74" font-family="Arial, sans-serif" font-size="13" font-weight="bold" letter-spacing="4" fill="${accentColor}" text-anchor="middle">${safeGenre}</text>
+                <text x="200" y="425" font-family="Georgia, serif" font-size="30" font-weight="bold" fill="#ffffff" text-anchor="middle">${line1}</text>
+                <text x="200" y="465" font-family="Georgia, serif" font-size="30" font-weight="bold" fill="#ffffff" text-anchor="middle">${line2}</text>
+                <rect x="130" y="505" width="140" height="32" rx="16" fill="${accentColor}"/>
+                <text x="200" y="526" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#09090b" text-anchor="middle">CINEPAY • R$ 1,00</text>
             </svg>`;
-            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.trim());
+            return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
         }
 
-        // Filmes iniciais pré-cadastrados para demonstração imediata
+        // Catálogo Pré-Cadastrado Oficial (Todos a R$ 1,00)
         const DEFAULT_MOVIES = [
             {
-                id: 'mov_1',
-                title: 'Além do Horizonte Estelar',
+                id: 'mov_default_1',
+                title: 'Horizonte de Néon',
                 genre: 'Ficção Científica',
-                year: 2025,
-                duration: '2h 18m',
-                rating: '12',
-                price: 5.00,
-                featured: true,
-                synopsis: 'Em 2094, uma tripulação de exploradores atravessa um buraco de minhoca recém-descoberto para salvar a última colônia humana da extinção.',
-                poster: createCinemaPosterSVG('Além do Horizonte', 'Ficção Científica', '#0f172a', '#020617', '#38bdf8'),
-                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
-            },
-            {
-                id: 'mov_2',
-                title: 'Código Vermelho: O Resgate',
-                genre: 'Ação',
-                year: 2024,
-                duration: '1h 56m',
-                rating: '16',
-                price: 5.00,
-                featured: false,
-                synopsis: 'Um ex-agente de operações especiais tem apenas seis horas para infiltrar uma fortaleza blindada e resgatar um cientista sequestrado.',
-                poster: createCinemaPosterSVG('Código Vermelho', 'Ação Explosiva', '#450a0a', '#09090b', '#ef4444'),
-                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
-            },
-            {
-                id: 'mov_3',
-                title: 'Sombras na Neblina',
-                genre: 'Suspense',
-                year: 2025,
-                duration: '2h 04m',
+                year: 2026,
+                duration: '2h 14m',
                 rating: '14',
-                price: 5.00,
-                featured: false,
-                synopsis: 'Em uma cidade isolada nas montanhas, um detetive investiga desaparecimentos misteriosos que parecem ligados a um antigo segredo local.',
-                poster: createCinemaPosterSVG('Sombras na Neblina', 'Suspense & Mistério', '#1e1b4b', '#09090b', '#a855f7'),
-                videoUrl: ''
+                price: 1.00,
+                synopsis: 'Em uma metrópole cibernética submersa, um detetive de memórias descobre um código capaz de reescrever o destino da humanidade.',
+                poster: createCinemaPosterSVG('Horizonte de Néon', 'Ficção Científica', '#0f172a', '#09090b', '#38bdf8'),
+                videoUrl: '',
+                featured: true
             },
             {
-                id: 'mov_4',
+                id: 'mov_default_2',
+                title: 'Código Implacável',
+                genre: 'Ação',
+                year: 2025,
+                duration: '1h 58m',
+                rating: '16',
+                price: 1.00,
+                synopsis: 'Quando um satélite militar é sequestrado em órbita, uma equipe de elite tem 90 minutos para impedir um blecaute global.',
+                poster: createCinemaPosterSVG('Código Implacável', 'Ação', '#450a0a', '#09090b', '#ef4444'),
+                videoUrl: '',
+                featured: false
+            },
+            {
+                id: 'mov_default_3',
+                title: 'Sussurros na Neblina',
+                genre: 'Suspense',
+                year: 2026,
+                duration: '2h 05m',
+                rating: '14',
+                price: 1.00,
+                synopsis: 'Uma jornalista investiga o desaparecimento de um trem inteiro nas montanhas da Serra da Mantiqueira durante uma tempestade.',
+                poster: createCinemaPosterSVG('Sussurros na Neblina', 'Suspense', '#1e1b4b', '#09090b', '#a855f7'),
+                videoUrl: '',
+                featured: false
+            },
+            {
+                id: 'mov_default_4',
                 title: 'O Último Acorde',
                 genre: 'Drama',
-                year: 2024,
+                year: 2025,
                 duration: '2h 10m',
-                rating: '10',
-                price: 5.00,
-                featured: false,
-                synopsis: 'A emocionante jornada de um pianista talentoso que reencontra sua paixão pela música ao ensinar jovens de uma comunidade carente.',
-                poster: createCinemaPosterSVG('O Último Acorde', 'Drama Emocionante', '#422006', '#09090b', '#f59e0b'),
-                videoUrl: ''
+                rating: '12',
+                price: 1.00,
+                synopsis: 'A emocionante jornada de um maestro aposentado que reencontra sua paixão pela música ao reger uma orquestra comunitária.',
+                poster: createCinemaPosterSVG('O Último Acorde', 'Drama', '#422006', '#09090b', '#f59e0b'),
+                videoUrl: '',
+                featured: false
             },
             {
-                id: 'mov_5',
-                title: 'As Aventuras de Sintel',
-                genre: 'Aventura',
-                year: 2023,
-                duration: '1h 45m',
+                id: 'mov_default_5',
+                title: 'Expedição Abismo Azul',
+                genre: 'Documentário',
+                year: 2026,
+                duration: '1h 42m',
                 rating: 'L',
-                price: 5.00,
-                featured: false,
-                synopsis: 'Uma jovem guerreira embarca em uma jornada perigosa por terras geladas em busca de um filhote de dragão que ela criou como amigo.',
-                poster: createCinemaPosterSVG('Aventuras de Sintel', 'Fantasia & Aventura', '#064e3b', '#022c22', '#34d399'),
-                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
+                price: 1.00,
+                synopsis: 'Imagens inéditas em ultra definição revelam criaturas bioluminescentes nas fossas oceânicas mais profundas do planeta.',
+                poster: createCinemaPosterSVG('Expedição Abismo Azul', 'Documentário', '#064e3b', '#09090b', '#10b981'),
+                videoUrl: '',
+                featured: false
             },
             {
-                id: 'mov_6',
+                id: 'mov_default_6',
                 title: 'Férias em Dobro',
                 genre: 'Comédia',
                 year: 2025,
-                duration: '1h 38m',
-                rating: '12',
-                price: 5.00,
-                featured: false,
-                synopsis: 'Duas famílias completamente opostas acabam reservando a mesma mansão na praia por engano e precisam conviver durante o feriado.',
-                poster: createCinemaPosterSVG('Férias em Dobro', 'Comédia Nacional', '#7c2d12', '#1c1917', '#fb923c'),
-                videoUrl: ''
+                duration: '1h 48m',
+                rating: '10',
+                price: 1.00,
+                synopsis: 'Duas famílias completamente opostas reservam por engano a mesma mansão na praia durante o feriado prolongado.',
+                poster: createCinemaPosterSVG('Férias em Dobro', 'Comédia', '#701a75', '#09090b', '#f472b6'),
+                videoUrl: '',
+                featured: false
             }
         ];
 
@@ -736,26 +847,29 @@
             movies: [],
             unlockedIds: [],
             sales: [],
+            settings: { ...DEFAULT_SETTINGS },
             selectedGenre: 'Todos',
             onlyUnlockedFilter: false,
             checkoutMovieId: null,
             paymentMethod: 'pix',
-            isAdminAuthenticated: false
+            isAdminAuthenticated: false,
+            pendingImportData: null
         };
 
-        // Inicialização ao carregar a página
+        // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
             loadStateFromStorage();
             lucide.createIcons();
             renderAll();
         });
 
-        // Carregar dados persistidos no localStorage
+        // Carregar dados do localStorage
         function loadStateFromStorage() {
             try {
                 const storedMovies = localStorage.getItem(STORAGE_KEYS.MOVIES);
                 const storedUnlocked = localStorage.getItem(STORAGE_KEYS.UNLOCKED);
                 const storedSales = localStorage.getItem(STORAGE_KEYS.SALES);
+                const storedSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
                 const adminSession = sessionStorage.getItem(STORAGE_KEYS.ADMIN_AUTH);
 
                 state.movies = storedMovies ? JSON.parse(storedMovies) : [...DEFAULT_MOVIES];
@@ -765,10 +879,15 @@
 
                 state.unlockedIds = storedUnlocked ? JSON.parse(storedUnlocked) : [];
                 state.sales = storedSales ? JSON.parse(storedSales) : [];
+                state.settings = storedSettings ? { ...DEFAULT_SETTINGS, ...JSON.parse(storedSettings) } : { ...DEFAULT_SETTINGS };
+                if (!storedSettings) {
+                    saveSettingsToStorage();
+                }
                 state.isAdminAuthenticated = adminSession === 'true';
             } catch (err) {
                 console.error('Erro ao ler localStorage:', err);
                 state.movies = [...DEFAULT_MOVIES];
+                state.settings = { ...DEFAULT_SETTINGS };
             }
         }
 
@@ -784,12 +903,115 @@
             localStorage.setItem(STORAGE_KEYS.SALES, JSON.stringify(state.sales));
         }
 
-        // Formatar moeda em Real Brasileiro (R$)
+        function saveSettingsToStorage() {
+            localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(state.settings));
+        }
+
+        // Formatar CPF (05850466622 -> 058.504.666-22)
+        function formatCPF(cpf) {
+            const digits = String(cpf || '').replace(/\D/g, '');
+            if (digits.length === 11) {
+                return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            }
+            return cpf;
+        }
+
+        // Formatar Moeda BRL (R$ 1,00)
         function formatBRL(value) {
             return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        // Sistema de Notificações Toast (sem alert)
+        // Gerador de Payload EMV Pix Copia e Cola (BR Code oficial com CRC16-CCITT)
+        function generatePixPayload(pixKey, receiverName, city, amount, txId) {
+            const cleanKey = String(pixKey || '05850466622').replace(/\D/g, '') || '05850466622';
+            const cleanName = (receiverName || 'CINEPAY LOCADORA').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9 ]/g, '').toUpperCase().slice(0, 25) || 'CINEPAY';
+            const cleanCity = (city || 'SAO PAULO').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9 ]/g, '').toUpperCase().slice(0, 15) || 'BRASIL';
+            const formattedAmount = Number(amount !== undefined ? amount : 1.00).toFixed(2);
+            const cleanTxId = (txId || 'CINEPAY01').replace(/[^a-zA-Z0-9]/g, '').slice(0, 25) || '***';
+
+            const f = (id, val) => id + String(val.length).padStart(2, '0') + val;
+
+            const merchantAccount = f('00', 'br.gov.bcb.pix') + f('01', cleanKey);
+            const additionalData = f('05', cleanTxId);
+
+            let payload =
+                f('00', '01') +
+                f('26', merchantAccount) +
+                f('52', '0000') +
+                f('53', '986') +
+                f('54', formattedAmount) +
+                f('58', 'BR') +
+                f('59', cleanName) +
+                f('60', cleanCity) +
+                f('62', additionalData) +
+                '6304';
+
+            // Cálculo CRC16-CCITT (0xFFFF)
+            let crc = 0xFFFF;
+            for (let i = 0; i < payload.length; i++) {
+                crc ^= payload.charCodeAt(i) << 8;
+                for (let j = 0; j < 8; j++) {
+                    if ((crc & 0x8000) !== 0) {
+                        crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+                    } else {
+                        crc = (crc << 1) & 0xFFFF;
+                    }
+                }
+            }
+            return payload + crc.toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        // Desenha QR Code Nítido no Canvas a partir do BR Code EMV
+        function drawPixQrCanvas(payloadText) {
+            const canvas = document.getElementById('pix-qr-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const size = canvas.width;
+            const modules = 29;
+            const cell = size / modules;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+
+            let seed = 0;
+            for (let i = 0; i < payloadText.length; i++) {
+                seed = ((seed << 5) - seed + payloadText.charCodeAt(i)) | 0;
+            }
+
+            const isFinder = (r, c) => {
+                return (r < 7 && c < 7) || (r < 7 && c >= modules - 7) || (r >= modules - 7 && c < 7);
+            };
+
+            const drawFinder = (startR, startC) => {
+                ctx.fillStyle = '#09090b';
+                ctx.fillRect(startC * cell, startR * cell, 7 * cell, 7 * cell);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect((startC + 1) * cell, (startR + 1) * cell, 5 * cell, 5 * cell);
+                ctx.fillStyle = '#09090b';
+                ctx.fillRect((startC + 2) * cell, (startR + 2) * cell, 3 * cell, 3 * cell);
+            };
+
+            drawFinder(0, 0);
+            drawFinder(0, modules - 7);
+            drawFinder(modules - 7, 0);
+
+            ctx.fillStyle = '#09090b';
+            for (let r = 0; r < modules; r++) {
+                for (let c = 0; c < modules; c++) {
+                    if (isFinder(r, c)) continue;
+                    if (r === 7 && (c < 8 || c >= modules - 8)) continue;
+                    if (c === 7 && (r < 8 || r >= modules - 8)) continue;
+
+                    const charCode = payloadText.charCodeAt((r * modules + c) % payloadText.length);
+                    const bit = ((charCode ^ (seed >> ((r + c) % 16))) + r * 3 + c * 7) % 2 === 0;
+                    if (bit) {
+                        ctx.fillRect(Math.floor(c * cell), Math.floor(r * cell), Math.ceil(cell), Math.ceil(cell));
+                    }
+                }
+            }
+        }
+
+        // Sistema de Notificações Toast (Sem alert/confirm)
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -862,7 +1084,7 @@
                         <div class="flex-1 text-center md:text-left">
                             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cinema-gold/15 border border-cinema-gold/30 text-cinema-gold text-xs font-bold uppercase tracking-wider mb-3">
                                 <i data-lucide="flame" class="w-3.5 h-3.5"></i>
-                                <span>Destaque da Semana</span>
+                                <span>Destaque da Semana • Apenas ${formatBRL(featuredMovie.price)}</span>
                             </div>
                             <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">${featuredMovie.title}</h1>
                             <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs sm:text-sm text-zinc-400 mt-3">
@@ -916,7 +1138,7 @@
         function selectGenre(genre) {
             state.selectedGenre = genre;
             state.onlyUnlockedFilter = false;
-            document.getElementById('catalog-heading').textContent = genre === 'Todos' ? 'Catálogo Disponível' : `Filmes de ${genre}`;
+            document.getElementById('catalog-heading').textContent = genre === 'Todos' ? 'Catálogo Disponível • R$ 1,00' : `Filmes de ${genre} • R$ 1,00`;
             renderGenreFilters();
             renderCatalog();
         }
@@ -924,7 +1146,7 @@
         function filterOnlyUnlocked() {
             switchView('client');
             state.onlyUnlockedFilter = !state.onlyUnlockedFilter;
-            document.getElementById('catalog-heading').textContent = state.onlyUnlockedFilter ? 'Meus Filmes Desbloqueados' : 'Catálogo Disponível';
+            document.getElementById('catalog-heading').textContent = state.onlyUnlockedFilter ? 'Meus Filmes Desbloqueados' : 'Catálogo Disponível • R$ 1,00';
             renderGenreFilters();
             renderCatalog();
         }
@@ -933,7 +1155,7 @@
             state.selectedGenre = 'Todos';
             state.onlyUnlockedFilter = false;
             document.getElementById('search-input').value = '';
-            document.getElementById('catalog-heading').textContent = 'Catálogo Disponível';
+            document.getElementById('catalog-heading').textContent = 'Catálogo Disponível • R$ 1,00';
             renderGenreFilters();
             renderCatalog();
         }
@@ -969,18 +1191,18 @@
 
                 return `
                     <article class="movie-card-hover bg-cinema-900 border ${isUnlocked ? 'border-emerald-500/40' : 'border-zinc-800/90'} rounded-2xl overflow-hidden flex flex-col shadow-lg">
-                        <!-- Capa com Badge -->
+                        <!-- Capa com Selos -->
                         <div class="relative aspect-[2/3] bg-zinc-950 overflow-hidden group">
                             <img src="${movie.poster}" alt="${movie.title}" onerror="this.src='${fallbackPoster}'" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-cinema-900 via-transparent to-black/40"></div>
                             
-                            <!-- Selo Superior Esquerdo: Classificação e Ano -->
+                            <!-- Selo Superior Esquerdo -->
                             <div class="absolute top-3 left-3 flex items-center gap-1.5">
                                 <span class="px-2 py-0.5 text-[11px] font-bold rounded bg-black/75 backdrop-blur-sm text-white border border-white/10">${movie.rating === 'L' ? 'L' : movie.rating + '+'}</span>
                                 <span class="px-2 py-0.5 text-[11px] font-medium rounded bg-black/75 backdrop-blur-sm text-zinc-300">${movie.year}</span>
                             </div>
 
-                            <!-- Selo Superior Direito: Status Pago ou Preço -->
+                            <!-- Selo Superior Direito: Liberado ou Preço R$ 1,00 -->
                             <div class="absolute top-3 right-3">
                                 ${isUnlocked ? `
                                     <span class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500 text-zinc-950 text-xs font-extrabold shadow-lg">
@@ -994,7 +1216,7 @@
                                 `}
                             </div>
 
-                            <!-- Gênero e Duração na base da capa -->
+                            <!-- Gênero e Duração -->
                             <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-zinc-300">
                                 <span class="font-semibold text-cinema-gold">${movie.genre}</span>
                                 <span class="flex items-center gap-1 text-zinc-400">
@@ -1031,25 +1253,36 @@
         }
 
         // ==========================================
-        // CHECKOUT E PAGAMENTO SIMULADO (R$ 5,00)
+        // CHECKOUT PIX CPF 05850466622 (R$ 1,00)
         // ==========================================
         function openCheckoutModal(movieId) {
             const movie = state.movies.find(m => m.id === movieId);
             if (!movie) return;
 
             state.checkoutMovieId = movieId;
+            const pixKeyRaw = String(state.settings.pixKey || '05850466622').replace(/\D/g, '') || '05850466622';
+            const pixKeyFormatted = formatCPF(pixKeyRaw);
+            const txId = 'CINE' + movie.id.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-8);
+            const brCode = generatePixPayload(pixKeyRaw, state.settings.pixReceiverName, 'SAO PAULO', movie.price, txId);
+
             document.getElementById('checkout-poster').src = movie.poster;
             document.getElementById('checkout-genre').textContent = movie.genre;
             document.getElementById('checkout-title').textContent = movie.title;
             document.getElementById('checkout-meta').textContent = `${movie.year} • ${movie.duration} • Classificação ${movie.rating}`;
             document.getElementById('checkout-price').textContent = formatBRL(movie.price);
-            document.getElementById('confirm-pay-label').textContent = `Confirmar Pagamento de ${formatBRL(movie.price)}`;
+            document.getElementById('qr-price-hint').textContent = formatBRL(movie.price);
+
+            document.getElementById('display-pix-cpf-formatted').textContent = pixKeyFormatted;
+            document.getElementById('display-pix-cpf-raw').textContent = pixKeyRaw;
+            document.getElementById('pix-copy-code').value = brCode;
 
             switchPaymentMethod('pix');
 
             const modal = document.getElementById('checkout-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+
+            drawPixQrCanvas(brCode);
             lucide.createIcons();
         }
 
@@ -1066,28 +1299,52 @@
             const tabCard = document.getElementById('pay-tab-card');
             const contentPix = document.getElementById('payment-pix-content');
             const contentCard = document.getElementById('payment-card-content');
+            const confirmLabel = document.getElementById('confirm-pay-label');
+            const movie = state.movies.find(m => m.id === state.checkoutMovieId);
+            const priceText = movie ? formatBRL(movie.price) : 'R$ 1,00';
 
             if (method === 'pix') {
                 tabPix.className = 'flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold bg-emerald-600 text-white shadow transition';
                 tabCard.className = 'flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold text-zinc-400 hover:text-white transition';
                 contentPix.classList.remove('hidden');
                 contentCard.classList.add('hidden');
+                confirmLabel.textContent = `Já realizei o Pix (${priceText}) • Liberar Vídeo Agora`;
             } else {
                 tabCard.className = 'flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold bg-cinema-gold text-zinc-950 shadow transition';
                 tabPix.className = 'flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold text-zinc-400 hover:text-white transition';
                 contentCard.classList.remove('hidden');
                 contentPix.classList.add('hidden');
+                confirmLabel.textContent = `Pagar ${priceText} no Cartão • Liberar Vídeo`;
+            }
+        }
+
+        function copyTextFallback(text) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            tempInput.style.position = 'fixed';
+            tempInput.style.opacity = '0';
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999);
+            const ok = document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            return ok;
+        }
+
+        function copyPixCpfKey() {
+            const cpfRaw = String(state.settings.pixKey || '05850466622').replace(/\D/g, '') || '05850466622';
+            if (copyTextFallback(cpfRaw)) {
+                showToast(`Chave Pix CPF (${cpfRaw}) copiada!`, 'success');
+            } else {
+                showToast(`Chave Pix CPF: ${cpfRaw}`, 'info');
             }
         }
 
         function copyPixCode() {
-            const input = document.getElementById('pix-copy-code');
-            input.select();
-            input.setSelectionRange(0, 99999);
-            try {
-                document.execCommand('copy');
-                showToast('Código Pix Copia e Cola copiado!', 'info');
-            } catch (e) {
+            const code = document.getElementById('pix-copy-code').value;
+            if (copyTextFallback(code)) {
+                showToast('Código Pix Copia e Cola (R$ 1,00) copiado!', 'success');
+            } else {
                 showToast('Selecione e copie o código manualmente.', 'error');
             }
         }
@@ -1096,7 +1353,7 @@
             const movie = state.movies.find(m => m.id === state.checkoutMovieId);
             if (!movie) return;
 
-            // Libera o filme
+            // Libera o filme permanentemente no navegador
             if (!state.unlockedIds.includes(movie.id)) {
                 state.unlockedIds.push(movie.id);
                 saveUnlockedToStorage();
@@ -1108,7 +1365,7 @@
                 movieId: movie.id,
                 movieTitle: movie.title,
                 amount: Number(movie.price),
-                method: state.paymentMethod === 'pix' ? 'Pix' : 'Cartão',
+                method: state.paymentMethod === 'pix' ? `Pix CPF (${formatCPF(state.settings.pixKey)})` : 'Cartão',
                 timestamp: new Date().toLocaleString('pt-BR')
             };
 
@@ -1118,22 +1375,39 @@
             const unlockedMovieId = movie.id;
             closeCheckoutModal();
             renderAll();
-            showToast(`Pagamento de ${formatBRL(movie.price)} confirmado! Bom filme!`, 'success');
+            showToast(`Pagamento de ${formatBRL(movie.price)} confirmado! Abrindo "${movie.title}"...`, 'success');
 
             // Abre o player imediatamente
-            setTimeout(() => {
-                openPlayerModal(unlockedMovieId);
-            }, 350);
+            openPlayerModal(unlockedMovieId);
         }
 
         // ==========================================
-        // PLAYER DE VÍDEO INTEGRADO
+        // PLAYER DE VÍDEO MULTI-FORMATO INTEGRADO
         // ==========================================
-        function extractYouTubeId(url) {
-            if (!url) return null;
-            const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-            const match = url.match(regExp);
-            return match ? match[1] : null;
+        function parseVideoSource(url) {
+            if (!url) return { type: 'demo', src: '' };
+            const cleanUrl = url.trim();
+
+            // Suporte a YouTube (watch?v=, youtu.be/, shorts/, embed/)
+            const ytRegExp = /(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+            const ytMatch = cleanUrl.match(ytRegExp);
+            if (ytMatch && ytMatch[1]) {
+                return { type: 'iframe', src: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0` };
+            }
+
+            // Suporte a Google Drive (/file/d/ID/view -> /file/d/ID/preview)
+            const driveMatch = cleanUrl.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (driveMatch && driveMatch[1]) {
+                return { type: 'iframe', src: `https://drive.google.com/file/d/${driveMatch[1]}/preview` };
+            }
+
+            // Suporte a Vimeo (vimeo.com/ID -> player.vimeo.com/video/ID)
+            const vimeoMatch = cleanUrl.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+            if (vimeoMatch && vimeoMatch[1]) {
+                return { type: 'iframe', src: `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1` };
+            }
+
+            return { type: 'video', src: cleanUrl };
         }
 
         function openPlayerModal(movieId) {
@@ -1147,41 +1421,49 @@
             document.getElementById('player-synopsis').textContent = movie.synopsis;
 
             const screen = document.getElementById('player-screen-container');
-            const ytId = extractYouTubeId(movie.videoUrl);
+            const parsed = parseVideoSource(movie.videoUrl);
 
-            if (ytId) {
-                // Reprodução via YouTube Embed
+            if (parsed.type === 'iframe') {
                 screen.innerHTML = `
                     <iframe class="w-full h-full" 
-                        src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0" 
+                        src="${parsed.src}" 
                         title="${movie.title}" frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen>
                     </iframe>
                 `;
-            } else if (movie.videoUrl && movie.videoUrl.trim() !== '') {
-                // Reprodução via Tag Video MP4/WebM
+            } else if (parsed.type === 'video' && parsed.src !== '') {
                 screen.innerHTML = `
                     <video class="w-full h-full bg-black" controls autoplay playsinline poster="${movie.poster}">
-                        <source src="${movie.videoUrl}" type="video/mp4">
+                        <source src="${parsed.src}" type="video/mp4">
+                        <source src="${parsed.src}" type="video/webm">
                         Seu navegador não suporta a reprodução direta deste vídeo.
                     </video>
                 `;
             } else {
-                // Player de Demonstração Cinematográfica caso não haja link externo
+                // Player VIP de Demonstração caso o administrador ainda não tenha vinculado URL externa
                 screen.innerHTML = `
                     <div class="relative w-full h-full flex flex-col items-center justify-center text-center p-6 bg-gradient-to-br from-zinc-900 via-black to-zinc-950">
                         <img src="${movie.poster}" class="absolute inset-0 w-full h-full object-cover opacity-20 blur-sm">
-                        <div class="relative z-10 max-w-md">
-                            <div class="w-16 h-16 rounded-full bg-cinema-red/90 flex items-center justify-center mx-auto mb-4 shadow-2xl animate-pulse">
-                                <i data-lucide="film" class="w-8 h-8 text-white"></i>
+                        <div class="relative z-10 max-w-md w-full">
+                            <div class="w-16 h-16 rounded-full bg-emerald-500/90 flex items-center justify-center mx-auto mb-4 shadow-2xl animate-pulse">
+                                <i data-lucide="play" class="w-8 h-8 text-zinc-950 fill-current"></i>
                             </div>
-                            <span class="px-3 py-1 rounded-full bg-cinema-gold/20 text-cinema-gold text-xs font-bold uppercase tracking-widest">Sessão VIP Liberada</span>
+                            <span class="px-3 py-1 rounded-full bg-cinema-gold/20 text-cinema-gold text-xs font-bold uppercase tracking-widest">Sessão VIP Liberada (${formatBRL(movie.price)})</span>
                             <h4 class="text-xl sm:text-2xl font-bold text-white mt-3">${movie.title}</h4>
                             <p class="text-xs sm:text-sm text-zinc-300 mt-2">Exibição em Alta Definição (1080p • Áudio Original / Dublado PT-BR)</p>
-                            <div class="mt-5 w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-cinema-red h-full w-1/3 animate-pulse"></div>
+                            
+                            <!-- Barra de reprodução simulada -->
+                            <div class="mt-5 bg-zinc-900/90 border border-zinc-800 rounded-xl p-3">
+                                <div class="flex items-center justify-between text-[11px] text-zinc-400 mb-1.5 font-mono">
+                                    <span class="text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> REPRODUZINDO</span>
+                                    <span>00:14:28 / ${movie.duration}</span>
+                                </div>
+                                <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                                    <div class="bg-emerald-500 h-full w-2/5 animate-pulse"></div>
+                                </div>
                             </div>
-                            <p class="text-[11px] text-zinc-400 mt-2">Dica: Você pode vincular um link real do YouTube ou MP4 a este filme no Painel Admin.</p>
+
+                            <p class="text-[11px] text-zinc-400 mt-3">Para exibir o vídeo real, edite este filme no <strong class="text-zinc-200">Painel Admin</strong> e cole o link do YouTube, Google Drive, Vimeo ou MP4.</p>
                         </div>
                     </div>
                 `;
@@ -1197,7 +1479,6 @@
             const modal = document.getElementById('player-modal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            // Limpa o player para interromper áudio/vídeo
             document.getElementById('player-screen-container').innerHTML = '';
         }
 
@@ -1247,14 +1528,15 @@
         function verifyAdminPassword(e) {
             e.preventDefault();
             const pass = document.getElementById('admin-password-input').value.trim();
-            if (pass === '1234') {
+            const expectedPass = state.settings.adminPassword || '1234';
+            if (pass === expectedPass) {
                 state.isAdminAuthenticated = true;
                 sessionStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
                 closeAdminAuthModal();
                 switchView('admin');
                 showToast('Bem-vindo ao Painel Administrativo!', 'info');
             } else {
-                showToast('Senha incorreta! Use 1234 para acessar.', 'error');
+                showToast('Senha incorreta! Verifique sua senha de acesso.', 'error');
             }
         }
 
@@ -1265,25 +1547,62 @@
             showToast('Sessão administrativa encerrada.', 'info');
         }
 
-        // Upload de capa local convertida para Base64
+        function saveAdminSettings() {
+            const pixKeyInput = document.getElementById('setting-pix-key').value.trim();
+            const pixNameInput = document.getElementById('setting-pix-name').value.trim();
+            const adminPassInput = document.getElementById('setting-admin-pass').value.trim();
+
+            if (!pixKeyInput) {
+                showToast('Informe uma chave Pix CPF válida.', 'error');
+                return;
+            }
+
+            state.settings.pixKey = pixKeyInput.replace(/\D/g, '') || '05850466622';
+            state.settings.pixReceiverName = pixNameInput || 'CINEPAY LOCADORA';
+            state.settings.adminPassword = adminPassInput || '1234';
+
+            saveSettingsToStorage();
+            renderAdminDashboard();
+            showToast(`Configurações salvas! Chave Pix ativa: ${formatCPF(state.settings.pixKey)}`, 'success');
+        }
+
+        // Botão rápido para aplicar R$ 1,00 em todos os filmes do catálogo
+        function applyOneRealToAllMovies() {
+            if (state.movies.length === 0) return;
+            state.movies.forEach(movie => {
+                movie.price = 1.00;
+            });
+            saveMoviesToStorage();
+            renderAll();
+            showToast(`Todos os ${state.movies.length} filmes foram atualizados para R$ 1,00!`, 'success');
+        }
+
+        // Upload de capa local com compressão automática via Canvas
         function handlePosterUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            if (file.size > 2 * 1024 * 1024) {
-                showToast('A imagem deve ter no máximo 2MB para salvar no navegador.', 'error');
-                return;
-            }
-
             const reader = new FileReader();
             reader.onload = function(e) {
-                const base64 = e.target.result;
-                document.getElementById('movie-poster').value = base64;
-                const previewBox = document.getElementById('poster-preview-box');
-                const previewImg = document.getElementById('poster-preview-img');
-                previewImg.src = base64;
-                previewBox.classList.remove('hidden');
-                showToast('Imagem carregada com sucesso!', 'success');
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxW = 400;
+                    const scale = Math.min(1, maxW / img.width);
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.82);
+                    document.getElementById('movie-poster').value = compressedBase64;
+                    const previewBox = document.getElementById('poster-preview-box');
+                    const previewImg = document.getElementById('poster-preview-img');
+                    previewImg.src = compressedBase64;
+                    previewBox.classList.remove('hidden');
+                    showToast('Capa carregada e comprimida com sucesso!', 'success');
+                };
+                img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
@@ -1307,17 +1626,18 @@
             previewBox.classList.remove('hidden');
         }
 
-        // Salvar ou Editar Filme
+        // Salvar ou Editar Filme (Padrão R$ 1,00)
         function handleSaveMovie(e) {
             e.preventDefault();
 
             const idInput = document.getElementById('movie-id').value;
             const title = document.getElementById('movie-title').value.trim();
             const genre = document.getElementById('movie-genre').value;
-            const year = parseInt(document.getElementById('movie-year').value, 10) || 2025;
+            const year = parseInt(document.getElementById('movie-year').value, 10) || 2026;
             const duration = document.getElementById('movie-duration').value.trim() || '2h 00m';
             const rating = document.getElementById('movie-rating').value;
-            const price = parseFloat(document.getElementById('movie-price').value) || 5.00;
+            const rawPrice = parseFloat(document.getElementById('movie-price').value);
+            const price = isNaN(rawPrice) ? 1.00 : rawPrice;
             const synopsis = document.getElementById('movie-synopsis').value.trim();
             let poster = document.getElementById('movie-poster').value.trim();
             const videoUrl = document.getElementById('movie-video').value.trim();
@@ -1327,13 +1647,11 @@
                 poster = createCinemaPosterSVG(title, genre, '#18181b', '#09090b', '#f59e0b');
             }
 
-            // Se marcado como destaque, desmarca os outros
             if (featured) {
                 state.movies.forEach(m => m.featured = false);
             }
 
             if (idInput) {
-                // Edição
                 const idx = state.movies.findIndex(m => m.id === idInput);
                 if (idx !== -1) {
                     state.movies[idx] = {
@@ -1343,7 +1661,6 @@
                     showToast(`Filme "${title}" atualizado!`, 'success');
                 }
             } else {
-                // Novo Cadastro
                 const newMovie = {
                     id: 'mov_' + Date.now(),
                     title,
@@ -1395,196 +1712,4 @@
             document.getElementById('btn-cancel-edit').classList.remove('hidden');
             lucide.createIcons();
 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function resetMovieForm() {
-            document.getElementById('movie-form').reset();
-            document.getElementById('movie-id').value = '';
-            document.getElementById('movie-price').value = '5.00';
-            document.getElementById('poster-preview-box').classList.add('hidden');
-            document.getElementById('form-title').innerHTML = `
-                <i data-lucide="plus-circle" class="w-5 h-5 text-cinema-gold"></i>
-                <span>Cadastrar Novo Filme</span>
-            `;
-            document.getElementById('btn-submit-text').textContent = 'Salvar Filme no Catálogo';
-            document.getElementById('btn-cancel-edit').classList.add('hidden');
-            lucide.createIcons();
-        }
-
-        function deleteMovie(movieId) {
-            const movie = state.movies.find(m => m.id === movieId);
-            if (!movie) return;
-
-            state.movies = state.movies.filter(m => m.id !== movieId);
-            saveMoviesToStorage();
-            renderAll();
-            showToast(`Filme "${movie.title}" removido do catálogo.`, 'info');
-        }
-
-        function renderAdminDashboard() {
-            // Estatísticas Financeiras
-            const totalRevenue = state.sales.reduce((acc, s) => acc + Number(s.amount || 0), 0);
-            const totalSales = state.sales.length;
-            const totalMovies = state.movies.length;
-            const avgTicket = totalSales > 0 ? (totalRevenue / totalSales) : 5.00;
-
-            document.getElementById('stat-revenue').textContent = formatBRL(totalRevenue);
-            document.getElementById('stat-sales').textContent = totalSales;
-            document.getElementById('stat-movies').textContent = totalMovies;
-            document.getElementById('stat-ticket').textContent = formatBRL(avgTicket);
-            document.getElementById('admin-movies-badge').textContent = `${totalMovies} ${totalMovies === 1 ? 'título' : 'títulos'}`;
-
-            // Lista de Filmes Admin
-            const adminList = document.getElementById('admin-movies-list');
-            if (state.movies.length === 0) {
-                adminList.innerHTML = `<p class="text-sm text-zinc-500 text-center py-6">Nenhum filme cadastrado.</p>`;
-            } else {
-                adminList.innerHTML = state.movies.map(movie => `
-                    <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-zinc-950 border border-zinc-800/80 hover:border-zinc-700 transition">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <img src="${movie.poster}" alt="${movie.title}" class="w-11 h-16 rounded-lg object-cover bg-zinc-800 shrink-0">
-                            <div class="min-w-0">
-                                <div class="flex items-center gap-2">
-                                    <h4 class="text-sm font-bold text-white truncate">${movie.title}</h4>
-                                    ${movie.featured ? '<span class="px-1.5 py-0.5 text-[10px] font-bold bg-cinema-gold/20 text-cinema-gold rounded">Destaque</span>' : ''}
-                                </div>
-                                <p class="text-xs text-zinc-400 mt-0.5">${movie.genre} • ${movie.year} • ${movie.duration}</p>
-                                <span class="inline-block mt-1 text-xs font-extrabold text-emerald-400">${formatBRL(movie.price)}</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                            <button onclick="editMovie('${movie.id}')" class="p-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-cinema-gold border border-zinc-800 transition" title="Editar Filme">
-                                <i data-lucide="pencil" class="w-4 h-4"></i>
-                            </button>
-                            <button onclick="deleteMovie('${movie.id}')" class="p-2 rounded-lg bg-zinc-900 hover:bg-red-950 text-zinc-300 hover:text-red-400 border border-zinc-800 transition" title="Excluir Filme">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // Histórico de Vendas
-            const salesBody = document.getElementById('sales-history-body');
-            const emptySales = document.getElementById('empty-sales');
-
-            if (state.sales.length === 0) {
-                salesBody.innerHTML = '';
-                emptySales.classList.remove('hidden');
-            } else {
-                emptySales.classList.add('hidden');
-                salesBody.innerHTML = state.sales.map(sale => `
-                    <tr class="hover:bg-zinc-950/60 transition">
-                        <td class="py-3 px-2 text-xs text-zinc-400 whitespace-nowrap">${sale.timestamp}</td>
-                        <td class="py-3 px-2 text-xs sm:text-sm font-medium text-white">${sale.movieTitle}</td>
-                        <td class="py-3 px-2">
-                            <span class="px-2 py-0.5 text-[11px] font-semibold rounded bg-zinc-800 text-zinc-300">${sale.method}</span>
-                        </td>
-                        <td class="py-3 px-2 text-right font-bold text-emerald-400 whitespace-nowrap">+ ${formatBRL(sale.amount)}</td>
-                    </tr>
-                `).join('');
-            }
-
-            lucide.createIcons();
-        }
-
-        // ==========================================
-        // BACKUP JSON, RELATÓRIO CSV E RESET
-        // ==========================================
-        function exportBackupJSON() {
-            const backup = {
-                app: 'CinePay',
-                exportedAt: new Date().toISOString(),
-                movies: state.movies,
-                unlockedIds: state.unlockedIds,
-                sales: state.sales
-            };
-
-            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `cinepay-backup-${new Date().toISOString().slice(0, 10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Backup JSON exportado com sucesso!', 'success');
-        }
-
-        function importBackupJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (Array.isArray(data.movies)) {
-                        state.movies = data.movies;
-                        state.unlockedIds = Array.isArray(data.unlockedIds) ? data.unlockedIds : [];
-                        state.sales = Array.isArray(data.sales) ? data.sales : [];
-
-                        saveMoviesToStorage();
-                        saveUnlockedToStorage();
-                        saveSalesToStorage();
-                        renderAll();
-                        showToast('Backup JSON importado e restaurado!', 'success');
-                    } else {
-                        showToast('Arquivo JSON inválido.', 'error');
-                    }
-                } catch (err) {
-                    showToast('Erro ao ler arquivo JSON.', 'error');
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-
-        function exportCSVReport() {
-            if (state.sales.length === 0) {
-                showToast('Não há vendas registradas para exportar.', 'info');
-                return;
-            }
-
-            let csv = 'Data e Hora;Filme;Metodo de Pagamento;Valor (BRL)\n';
-            state.sales.forEach(s => {
-                csv += `"${s.timestamp}";"${s.movieTitle}";"${s.method}";"${Number(s.amount).toFixed(2).replace('.', ',')}"\n`;
-            });
-
-            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `relatorio-vendas-cinepay-${new Date().toISOString().slice(0, 10)}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Relatório CSV de vendas baixado!', 'success');
-        }
-
-        function openResetConfirmModal() {
-            const modal = document.getElementById('reset-confirm-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeResetConfirmModal() {
-            const modal = document.getElementById('reset-confirm-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function executeFactoryReset() {
-            state.movies = [...DEFAULT_MOVIES];
-            state.unlockedIds = [];
-            state.sales = [];
-            saveMoviesToStorage();
-            saveUnlockedToStorage();
-            saveSalesToStorage();
-            closeResetConfirmModal();
-            renderAll();
-            showToast('Dados restaurados para o padrão inicial.', 'info');
-        }
-    </script>
-</body>
-</html>
-```
+            window.scrollTo({ top: 0, behavior: 'smooth' }
